@@ -7,7 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @DiscriminatorValue("TEACHER")
 @Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@NoArgsConstructor
 @SuperBuilder
 public class Teacher extends Member {
     // 추가 필드 없음
