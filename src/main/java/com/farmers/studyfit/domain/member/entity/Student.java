@@ -10,9 +10,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 public class Student extends Member {
-    @Column(nullable=false, length=100)
+    @Column
     private String school;
 
-    @Column(nullable=false)
+    @Column
     private Integer grade;
 }

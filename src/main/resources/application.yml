@@ -15,3 +15,8 @@ spring:
     hibernate:
       format_sql: true
       ddl-auto: create
+
+jwt:
+  secret: "여기에-64자-이상의-랜덤-시크릿-키-입력하세요"
+  access-expiration-ms: 900000        # 15분
+  refresh-expiration-ms: 1209600000   # 14일
