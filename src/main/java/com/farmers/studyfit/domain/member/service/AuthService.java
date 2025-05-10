@@ -91,8 +91,8 @@ public class AuthService {
                 .member(m)
                 .build();
         refreshRepo.save(rt);
-
-        return new TokenResponseDto(access, refresh);
+        String role = m instanceof Student ? "STUDENT" : "TEACHER";
+        return new TokenResponseDto(access, refresh, role);
     }
 
     @Transactional
