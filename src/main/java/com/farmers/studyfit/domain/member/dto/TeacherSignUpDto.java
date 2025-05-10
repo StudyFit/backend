@@ -1,8 +1,15 @@
 package com.farmers.studyfit.domain.member.dto;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
 import java.time.LocalDate;
 
-public class TeacherSignUpRequestDto {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class TeacherSignUpDto {
     @NotBlank
     private String loginId;
 
@@ -12,9 +19,9 @@ public class TeacherSignUpRequestDto {
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull @Past
     private LocalDate birth;
 
     @NotBlank
-    private String phoneNum;
+    private String phoneNumber;
 }

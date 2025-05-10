@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StudentSignUpRequestDto {
+public class StudentSignUpDto {
 
     @NotBlank
     private String loginId;
@@ -19,15 +19,15 @@ public class StudentSignUpRequestDto {
     @NotBlank
     private String name;
 
-    @NotBlank
+    @NotNull @Past
     private LocalDate birth;
 
     @NotBlank
     private String school;
 
-    @Min(1)
+    @Min(1) @Max(12)
     private int grade;
 
     @NotBlank
-    private String phoneNum;
+    private String phoneNumber;
 }

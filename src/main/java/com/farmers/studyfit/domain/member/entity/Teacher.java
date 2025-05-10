@@ -1,35 +1,14 @@
 package com.farmers.studyfit.domain.member.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
-@Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class Teacher {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long s_id;
-
-    private String loginId; // 아이디
-
-    private String password;
-
-    private String name;
-
-    private LocalDate birth;
-
-    private String phoneNumber;
-
-    //private String role;
+@DiscriminatorValue("TEACHER")
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor
+@SuperBuilder
+public class Teacher extends Member {
+    // 추가 필드 없음
 }
