@@ -5,13 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(
-        name = "role",
-        discriminatorType = DiscriminatorType.STRING,
-        length = 20
-)
+@MappedSuperclass
 @Getter @Setter
 @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder

@@ -9,8 +9,9 @@ import com.farmers.studyfit.domain.member.entity.Member;
 import com.farmers.studyfit.domain.member.entity.RefreshToken;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
-import com.farmers.studyfit.domain.member.repository.MemberRepository;
 import com.farmers.studyfit.domain.member.repository.RefreshTokenRepository;
+import com.farmers.studyfit.domain.member.repository.StudentRepository;
+import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,25 +19,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.ZoneId;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final MemberRepository memberRepo;
-    private final RefreshTokenRepository refreshRepo;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public void signUpStudent(StudentSignUpRequestDto dto) {
-        if (memberRepo.existsByLoginId(dto.getLoginId())) {
-            throw new RuntimeException();
-            //throw new BadRequestException("이미 사용 중인 로그인 아이디입니다.");
-        }
-        Student student = Student.builder()
+        checkLoginIdDuplicateCheck(dto.getLoginId());
+        Student s = Student.builder()
                 .loginId(dto.getLoginId())
                 .passwordHash(passwordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
@@ -45,64 +46,82 @@ public class AuthService {
                 .school(dto.getSchool())
                 .grade(dto.getGrade())
                 .build();
-        memberRepo.save(student);
+        studentRepository.save(s);
     }
 
     @Transactional
     public void signUpTeacher(TeacherSignUpRequestDto dto) {
-        if (memberRepo.existsByLoginId(dto.getLoginId())) {
-            throw new RuntimeException();
-            //throw new BadRequestException("이미 사용 중인 로그인 아이디입니다.");
-        }
-        Teacher teacher = Teacher.builder()
+        checkLoginIdDuplicateCheck(dto.getLoginId());
+        Teacher t = Teacher.builder()
                 .loginId(dto.getLoginId())
                 .passwordHash(passwordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
                 .birth(dto.getBirth())
                 .phoneNumber(dto.getPhoneNumber())
                 .build();
-        memberRepo.save(teacher);
+        teacherRepository.save(t);
+    }
+
+    private void checkLoginIdDuplicateCheck(String loginId){
+        if(studentRepository.existsByLoginId(loginId)|| teacherRepository.existsByLoginId(loginId)){
+            throw new RuntimeException();
+        }
     }
 
     @Transactional
     public TokenResponseDto login(LoginRequestDto dto) {
-        Member m = memberRepo.findByLoginId(dto.getLoginId())
-                .orElseThrow(RuntimeException::new);
-                //.orElseThrow(() -> new UsernameNotFoundException("사용자 없음"));
-        if (!passwordEncoder.matches(dto.getPassword(), m.getPasswordHash())) {
+        Member member = studentRepository.findByLoginId(dto.getLoginId())
+                .map(s -> (Member)s)
+                .orElseGet(() ->
+                        teacherRepository.findByLoginId(dto.getLoginId())
+                                .orElseThrow(() -> new UsernameNotFoundException("사용자 없음"))
+                );
+
+        if (!passwordEncoder.matches(dto.getPassword(), member.getPasswordHash())) {
             throw new RuntimeException();
             //throw new BadCredentialsException("비밀번호 불일치");
         }
 
-        // 1) 액세스 토큰
-        String access = tokenProvider.createAccessToken(m);
-        // 2) 리프레시 토큰 (jti 는 UUID)
-        String jti = UUID.randomUUID().toString();
+        // 토큰 발급·저장 로직 (이전과 동일)
+        String access  = tokenProvider.createAccessToken(member);
+        String jti     = UUID.randomUUID().toString();
         String refresh = tokenProvider.createRefreshToken(jti);
 
-        // 3) 기존 리프레시 전부 삭제 + 새로 저장
-        refreshRepo.deleteAllByMember(m);
+        refreshTokenRepository.deleteAllByMemberId(member.getId());
         RefreshToken rt = RefreshToken.builder()
                 .jti(jti)
                 .expiry(
-                        LocalDateTime.now()
-                                .plus(tokenProvider.getRefreshExpirationMs(), ChronoUnit.MILLIS)
+                        LocalDateTime.ofInstant(
+                                Instant.now().plusMillis(tokenProvider.getRefreshExpirationMs()),
+                                ZoneId.systemDefault()
+                        )
                 )
-                .member(m)
+                .memberId(member.getId())
+                .role(member instanceof Student ? "STUDENT" : "TEACHER")
                 .build();
-        refreshRepo.save(rt);
-        String role = m instanceof Student ? "STUDENT" : "TEACHER";
+        refreshTokenRepository.save(rt);
+
+
+        String role = member instanceof Student ? "STUDENT" : "TEACHER";
         return new TokenResponseDto(access, refresh, role);
     }
 
     @Transactional
     public void logout(String accessToken) {
-        // 액세스 토큰에서 회원 ID 추출
         Claims claims = tokenProvider.parseClaims(accessToken);
         Long memberId = Long.valueOf(claims.getSubject());
-        Member m = memberRepo.findById(memberId)
-                .orElseThrow(() -> new UsernameNotFoundException("회원 없음"));
-        // 해당 회원의 모든 리프레시 토큰 삭제 → 즉시 로그아웃
-        refreshRepo.deleteAllByMember(m);
+
+        // 학생 테이블에서 찾고, 없으면 선생님 테이블에서 찾기
+        Optional<Member> memberOpt = studentRepository.findById(memberId)
+                .map(s -> (Member) s)
+                .or(() -> teacherRepository.findById(memberId)
+                        .map(t -> (Member) t)
+                );
+
+        Member member = memberOpt
+                .orElseThrow(() -> new UsernameNotFoundException("회원 없음: ID=" + memberId));
+
+        refreshTokenRepository.deleteAllByMemberId(member.getId());
     }
+
 }
