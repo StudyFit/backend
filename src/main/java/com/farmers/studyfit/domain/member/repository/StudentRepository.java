@@ -1,10 +1,10 @@
 package com.farmers.studyfit.domain.member.repository;
 
-import com.farmers.studyfit.domain.member.entity.Member;
+import com.farmers.studyfit.domain.member.entity.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
-    Optional<Member> findByLoginId(String loginId);
+public interface StudentRepository extends JpaRepository<Student, Long> {
+    Optional<Student> findByLoginId(String loginId);
     boolean existsByLoginId(String loginId);
 }

@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
-@DiscriminatorValue("TEACHER")
 @Getter @Setter
 @NoArgsConstructor
 @SuperBuilder

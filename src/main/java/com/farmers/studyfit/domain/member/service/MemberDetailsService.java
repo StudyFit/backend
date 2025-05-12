@@ -1,55 +1,59 @@
 package com.farmers.studyfit.domain.member.service;
 
 import com.farmers.studyfit.domain.member.entity.Member;
-import com.farmers.studyfit.domain.member.repository.MemberRepository;
+import com.farmers.studyfit.domain.member.entity.Student;
+import com.farmers.studyfit.domain.member.repository.StudentRepository;
+import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class MemberDetailsService implements UserDetailsService {
 
-    private final MemberRepository memberRepo;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
 
-    public MemberDetailsService(MemberRepository memberRepo) {
-        this.memberRepo = memberRepo;
+    public MemberDetailsService(
+            StudentRepository studentRepository,
+            TeacherRepository teacherRepository
+    ) {
+        this.studentRepository = studentRepository;
+        this.teacherRepository = teacherRepository;
     }
 
-    /**
-     * 스프링 시큐리티 로그인(AuthenticationManager) 시
-     * 사용자가 입력한 loginId로 UserDetails를 조회할 때 호출됩니다.
-     */
     @Override
-    public UserDetails loadUserByUsername(String loginId)
-            throws UsernameNotFoundException {
-        Member member = memberRepo.findByLoginId(loginId)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginId)
-                );
+    public UserDetails loadUserByUsername(String loginId){
+        // 1) 학생 먼저 조회
+        Optional<Member> memberOpt = studentRepository.findByLoginId(loginId)
+                .map(s -> (Member) s)
+                // 2) 없으면 선생님 조회
+                .or(() -> teacherRepository.findByLoginId(loginId).map(t -> (Member) t));
+
+        // 3) 없으면 예외
+        Member member = memberOpt
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginId));
+
         return buildUserDetails(member);
     }
 
-    /**
-     * JWT 필터에서 토큰의 subject(회원 ID)로 직접 UserDetails를 조회할 때 사용합니다.
-     */
     public UserDetails loadUserById(Long memberId) {
-        Member member = memberRepo.findById(memberId)
-                .orElseThrow(() ->
-                        new UsernameNotFoundException("사용자를 찾을 수 없습니다: ID=" + memberId)
-                );
+        Optional<Member> memberOpt = studentRepository.findById(memberId)
+                .map(s -> (Member) s)
+                .or(()-> teacherRepository.findById(memberId).map(t->(Member)t));
+
+        Member member = memberOpt
+                .orElseThrow(() -> new RuntimeException());
+
         return buildUserDetails(member);
     }
 
     private UserDetails buildUserDetails(Member member) {
-        // Spring Security가 제공하는 User 객체를 사용하거나,
-        // 직접 CustomUserDetails 클래스를 만들어도 됩니다.
         return User.builder()
                 .username(member.getLoginId())
                 .password(member.getPasswordHash())
-                .roles(
-                        // Member가 Student인지 Teacher인지에 따라 ROLE 설정
-                        member instanceof com.farmers.studyfit.domain.member.entity.Student
-                                ? "STUDENT" : "TEACHER"
-                )
+                .roles(member instanceof Student ? "STUDENT" : "TEACHER")
                 .build();
     }
 }
