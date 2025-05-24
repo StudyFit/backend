@@ -12,8 +12,12 @@ import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.RefreshTokenRepository;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
+import com.farmers.studyfit.exception.DuplicateLoginIdException;
+import com.farmers.studyfit.exception.UnAuthorizedException;
+import com.farmers.studyfit.exception.UserNotFoundException;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,7 +68,7 @@ public class AuthService {
 
     private void checkLoginIdDuplicateCheck(String loginId){
         if(studentRepository.existsByLoginId(loginId)|| teacherRepository.existsByLoginId(loginId)){
-            throw new RuntimeException();
+            throw new DuplicateLoginIdException("중복된 아이디 입니다.");
         }
     }
 
@@ -78,8 +82,7 @@ public class AuthService {
                 );
 
         if (!passwordEncoder.matches(dto.getPassword(), member.getPasswordHash())) {
-            throw new RuntimeException();
-            //throw new BadCredentialsException("비밀번호 불일치");
+            throw new BadCredentialsException("비밀번호 불일치");
         }
 
         // 토큰 발급·저장 로직 (이전과 동일)
@@ -119,9 +122,50 @@ public class AuthService {
                 );
 
         Member member = memberOpt
-                .orElseThrow(() -> new UsernameNotFoundException("회원 없음: ID=" + memberId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: "+memberId));
 
         refreshTokenRepository.deleteAllByMemberId(member.getId());
+    }
+
+    @Transactional
+    public TokenResponseDto refreshAccessToken(String jti) {
+        // 1) JTI 로 RefreshToken 조회
+        RefreshToken stored = refreshTokenRepository.findByJti(jti)
+                .orElseThrow(() -> new UnAuthorizedException("유효하지 않은 리프레시 토큰입니다."));
+
+        // 2) 만료 검사
+        if (stored.getExpiry().isBefore(LocalDateTime.now())) {
+            refreshTokenRepository.deleteById(stored.getId());  // 만료된 건 지워 두기
+            throw new UnAuthorizedException("리프레시 토큰이 만료되었습니다.");
+        }
+
+        // 3) 회원 조회
+        Long memberId = stored.getMemberId();
+        Member member = studentRepository.findById(memberId)
+                .map(s -> (Member)s)
+                .orElseGet(() -> teacherRepository.findById(memberId)
+                        .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: "+memberId)));
+
+        // 4) 신규 액세스 토큰(짧게) + 신규 리프레시 토큰(회전)
+        String newAccess  = tokenProvider.createAccessToken(member);
+        String newJti     = UUID.randomUUID().toString();
+        String newRefresh = tokenProvider.createRefreshToken(newJti);
+
+        // 5) 기존 리프레시 토큰 무효화(회전)
+        refreshTokenRepository.deleteById(stored.getId());
+        RefreshToken next = RefreshToken.builder()
+                .jti(newJti)
+                .expiry(LocalDateTime.ofInstant(
+                        Instant.now().plusMillis(tokenProvider.getRefreshExpirationMs()),
+                        ZoneId.systemDefault()))
+                .memberId(memberId)
+                .role(member instanceof Student ? "STUDENT" : "TEACHER")
+                .build();
+        refreshTokenRepository.save(next);
+
+        // 6) 클라이언트에 새 토큰 반환
+        String role = member instanceof Student ? "STUDENT" : "TEACHER";
+        return new TokenResponseDto(newAccess, newRefresh, role);
     }
 
 }

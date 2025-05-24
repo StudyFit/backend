@@ -23,11 +23,12 @@ public class StudentSignUpRequestDto {
     private LocalDate birth;
 
     @NotBlank
+    private String phoneNumber;
+
+    @NotBlank
     private String school;
 
     @Min(1) @Max(12)
     private int grade;
 
-    @NotBlank
-    private String phoneNumber;
 }
