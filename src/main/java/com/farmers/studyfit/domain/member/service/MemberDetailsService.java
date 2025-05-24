@@ -4,6 +4,7 @@ import com.farmers.studyfit.domain.member.entity.Member;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
+import com.farmers.studyfit.exception.UserNotFoundException;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +34,7 @@ public class MemberDetailsService implements UserDetailsService {
 
         // 3) 없으면 예외
         Member member = memberOpt
-                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + loginId));
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + loginId));
 
         return buildUserDetails(member);
     }
@@ -44,7 +45,7 @@ public class MemberDetailsService implements UserDetailsService {
                 .or(()-> teacherRepository.findById(memberId).map(t->(Member)t));
 
         Member member = memberOpt
-                .orElseThrow(() -> new RuntimeException());
+                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + memberId));
 
         return buildUserDetails(member);
     }

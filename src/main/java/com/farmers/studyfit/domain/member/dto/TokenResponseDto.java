@@ -6,5 +6,5 @@ import lombok.*;
 public class TokenResponseDto {
     private String accessToken;
     private String refreshToken;
-    private String role;        // 추가!
+    private String role;
 }

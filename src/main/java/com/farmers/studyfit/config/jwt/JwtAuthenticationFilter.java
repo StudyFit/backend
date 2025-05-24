@@ -1,4 +1,4 @@
-package com.farmers.studyfit.security;
+package com.farmers.studyfit.config.jwt;
 
 import com.farmers.studyfit.config.jwt.TokenProvider;
 import com.farmers.studyfit.domain.member.service.MemberDetailsService;

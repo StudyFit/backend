@@ -1,9 +1,6 @@
 package com.farmers.studyfit.domain.member.controller;
 
-import com.farmers.studyfit.domain.member.dto.LoginRequestDto;
-import com.farmers.studyfit.domain.member.dto.StudentSignUpRequestDto;
-import com.farmers.studyfit.domain.member.dto.TeacherSignUpRequestDto;
-import com.farmers.studyfit.domain.member.dto.TokenResponseDto;
+import com.farmers.studyfit.domain.member.dto.*;
 import com.farmers.studyfit.domain.member.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -53,9 +50,14 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDto> refresh(@RequestBody @Valid AccessTokenRequestDto dto) {
+        TokenResponseDto tokens = authService.refreshAccessToken(dto.getRefreshToken());
+        return ResponseEntity.ok(tokens);
+    }
+
     @PostMapping("/test")
     public ResponseEntity<Void> test(){
         return ResponseEntity.noContent().build();
     }
 }
-
