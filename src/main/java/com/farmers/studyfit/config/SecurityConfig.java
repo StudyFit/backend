@@ -51,7 +51,8 @@ public class SecurityConfig {
                                 "/api/auth/signup/teacher",
                                 "/api/auth/login",
                                 "/api/auth/refresh",
-                                "/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**"
+                                "/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**",
+                                "/api/auth/release-test"
                         ).permitAll()
                         // 그 외 모든 요청은 인증 필요
                         .anyRequest().authenticated()
