@@ -7,10 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -56,8 +53,13 @@ public class AuthController {
         return ResponseEntity.ok(tokens);
     }
 
-    @PostMapping("/test")
+    @GetMapping("/test")
     public ResponseEntity<Void> test(){
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/release-test")
+    public ResponseEntity<String> releaseTest(){
+        return ResponseEntity.ok("배포 확인");
     }
 }
