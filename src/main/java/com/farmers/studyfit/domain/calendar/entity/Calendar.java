@@ -1,4 +1,4 @@
-package com.farmers.studyfit.domain.calender.entity;
+package com.farmers.studyfit.domain.calendar.entity;
 
 import com.farmers.studyfit.domain.connection.entity.Connection;
 import jakarta.persistence.*;

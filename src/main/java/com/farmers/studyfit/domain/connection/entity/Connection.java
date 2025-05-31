@@ -1,6 +1,6 @@
 package com.farmers.studyfit.domain.connection.entity;
 
-import com.farmers.studyfit.domain.calender.entity.Calendar;
+import com.farmers.studyfit.domain.calendar.entity.Calendar;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
