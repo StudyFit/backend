@@ -1,6 +1,6 @@
 package com.farmers.studyfit.domain.connection.entity;
 
-import com.farmers.studyfit.domain.calender.entity.Calender;
+import com.farmers.studyfit.domain.calender.entity.Calendar;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
@@ -31,6 +31,7 @@ public class Connection {
     private String studentColor;
     private String address;
     private String memo;
+    @Enumerated(EnumType.STRING)
     private ConnectionState status;
     private Date startDate;
     private Date endDate;
@@ -38,7 +39,7 @@ public class Connection {
     @OneToMany
     private List<ClassTime> classTimeList;
     @OneToMany
-    private List<Calender> calenderList;
+    private List<Calendar> calenderList;
     @OneToMany
     private List<HomeworkDate> homeworkDateList;
 }
