@@ -18,7 +18,7 @@ public class MemberService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
 
-    public Teacher getCurrentMemberTeacher() {
+    public Teacher getCurrentTeacherMember() {
         String loginId = SecurityContextHolder
                 .getContext()
                 .getAuthentication()

@@ -6,8 +6,7 @@ import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -33,8 +32,8 @@ public class Connection {
     private String memo;
     @Enumerated(EnumType.STRING)
     private ConnectionState status;
-    private Date startDate;
-    private Date endDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @OneToMany
     private List<ClassTime> classTimeList;
