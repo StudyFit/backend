@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Calender {
+public class Calendar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +23,7 @@ public class Calender {
     private LocalTime endTime;
     private String content;
     private String memo;
+    @Enumerated(EnumType.STRING)
     private ScheduleType scheduleType;
 }
 
