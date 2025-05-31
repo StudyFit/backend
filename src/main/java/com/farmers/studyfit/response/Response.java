@@ -9,18 +9,18 @@ import org.springframework.http.HttpStatus;
 import static org.springframework.http.HttpStatus.OK;
 @AllArgsConstructor
 @Getter
-@JsonPropertyOrder({"success","code","msg","data"})
+@JsonPropertyOrder({"success","code","message","data"})
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Response {
     private boolean success;
     private int code;
-    private String msg;
+    private String message;
     private Object data;
 
     public Response(boolean success, int code, String msg) {
         this.success = success;
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
     }
 
     public static Response success(String msg) {
