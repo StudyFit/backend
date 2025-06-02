@@ -13,5 +13,5 @@ public class Message {
     public static final String SET_COLOR_SUCCESS = "친구 요청 수락 후 색상 설정하기 성공";
     public static final String SEARCH_STUDENT_LIST_SUCCESS = "학생 목록 조회하기 성공";
     public static final String SEARCH_TEACHER_LIST_SUCCESS = "선생님 목록 조회하기 성공";
-
+    public static final String ASSIGN_HOMEWORK_SUCCESS = "숙제 등록하기 성공";
 }
