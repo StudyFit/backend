@@ -82,7 +82,6 @@ public class ConnectionService {
 
             // startDate와 endDate 사이에 들어오는 모든 날짜를 순회
             while (!firstMatchingDate.isAfter(endDate)) {
-                System.out.println("매칭된 날짜: " + firstMatchingDate + " (요일: " + targetDay + ")");
                 Calendar calendar = Calendar.builder()
                         .connection(connection)
                         .date(firstMatchingDate)
