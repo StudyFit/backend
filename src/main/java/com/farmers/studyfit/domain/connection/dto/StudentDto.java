@@ -6,13 +6,13 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class StudentDto {
+    private Long connectionId;
     private Long studentId;
     private String studentName;
-    private Integer grade;
+    private String studentInfo;
     private String subject;
     private String themeColor;
-    private String note;
+    private String memo;
     private String address;
     private String friendStatus;
-    private Long connectId;
 }

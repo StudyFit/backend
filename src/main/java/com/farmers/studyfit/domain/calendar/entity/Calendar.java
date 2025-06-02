@@ -4,6 +4,7 @@ import com.farmers.studyfit.domain.connection.entity.Connection;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -19,6 +20,7 @@ public class Calendar {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connection_id")
     private Connection connection;
+    private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
     private String content;

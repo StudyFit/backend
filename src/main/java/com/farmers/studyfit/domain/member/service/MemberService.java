@@ -23,8 +23,6 @@ public class MemberService {
                 .getContext()
                 .getAuthentication()
                 .getName();
-        System.out.println("현재 로그인 ID: " + loginId);
-
         return teacherRepository
                 .findByLoginId(loginId)
                 .orElseThrow(() ->
@@ -37,8 +35,6 @@ public class MemberService {
                 .getContext()
                 .getAuthentication()
                 .getName();
-        System.out.println("현재 로그인 ID: " + loginId);
-
         return studentRepository
                 .findByLoginId(loginId)
                 .orElseThrow(() ->

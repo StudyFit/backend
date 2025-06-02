@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class TeacherDto {
+    private Long connectionId;
     private Long teacherId;
     private String teacherName;
     private String subject;
     private String themeColor;
-    private String friendStatus;
-    private Long connectId;
+    private String connectionStatus;
 }

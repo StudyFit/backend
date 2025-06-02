@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResponseConnectionRequestDto {
-    private Long studentId;
-    private Long teacherId;
-    private boolean accepted;
+    private Long connectionId;
+    private String action;
 }
