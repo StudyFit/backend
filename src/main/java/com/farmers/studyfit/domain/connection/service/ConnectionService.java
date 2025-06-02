@@ -39,7 +39,7 @@ public class ConnectionService {
     public void requestConnection(RequestConnectionRequestDto requestConnectionRequestDto) {
         Student student = studentRepository.findById(requestConnectionRequestDto.getStudentId()).orElseThrow();
         Connection connection = Connection.builder()
-                .teacher(teacherRepository.findById(1L).orElseThrow())
+                .teacher(memberService.getCurrentTeacherMember())
                 .student(student)
                 .subject(requestConnectionRequestDto.getSubject())
                 .studentColor(requestConnectionRequestDto.getThemeColor())
