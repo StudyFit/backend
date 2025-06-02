@@ -1,7 +1,14 @@
 package com.farmers.studyfit.domain.connection.repository;
 
 import com.farmers.studyfit.domain.connection.entity.Connection;
+import com.farmers.studyfit.domain.connection.entity.ConnectionState;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface ConnectionRepository extends JpaRepository<Connection, Long> {
+    Optional<Connection> findByStudentIdAndTeacherIdAndStatus(Long studentId, Long teacherId, ConnectionState status);
+    List<Connection> findByTeacherIdAndStatus(Long teacherId, ConnectionState status);
+    List<Connection> findByStudentIdAndStatus(Long studentId, ConnectionState status);
 }

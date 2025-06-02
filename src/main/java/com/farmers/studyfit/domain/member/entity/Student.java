@@ -18,6 +18,6 @@ public class Student extends Member {
     @Column
     private Integer grade;
 
-    @OneToMany
+    @OneToMany(mappedBy = "student")
     private List<Connection> connectionList;
 }

@@ -48,7 +48,12 @@ public class GlobalExceptionHandler {
         ErrorResponse body = new ErrorResponse("VALIDATION_FAILED", detail);
         return ResponseEntity.badRequest().body(body);
     }
-
+    // 연결(Connection)을 찾지 못했을 때: ConnectionNotFoundException → 404 NOT_FOUND
+    @ExceptionHandler(ConnectionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleConnectionNotFound(ConnectionNotFoundException ex) {
+        ErrorResponse body = new ErrorResponse("CONNECTION_NOT_FOUND", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
     // 그 외 모든 예외 처리: Exception → 500 INTERNAL_SERVER_ERROR
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {

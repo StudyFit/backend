@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 public class Teacher extends Member {
-    @OneToMany
+    @OneToMany(mappedBy = "teacher")
     private List<Connection> connectionList;
 }

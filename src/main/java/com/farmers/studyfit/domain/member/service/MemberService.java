@@ -1,5 +1,6 @@
 package com.farmers.studyfit.domain.member.service;
 
+import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
@@ -9,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -18,11 +17,13 @@ public class MemberService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
 
+
     public Teacher getCurrentTeacherMember() {
         String loginId = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
+        System.out.println("현재 로그인 ID: " + loginId);
 
         return teacherRepository
                 .findByLoginId(loginId)
@@ -36,6 +37,8 @@ public class MemberService {
                 .getContext()
                 .getAuthentication()
                 .getName();
+        System.out.println("현재 로그인 ID: " + loginId);
+
         return studentRepository
                 .findByLoginId(loginId)
                 .orElseThrow(() ->

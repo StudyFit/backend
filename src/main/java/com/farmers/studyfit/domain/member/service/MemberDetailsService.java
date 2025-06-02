@@ -2,6 +2,7 @@ package com.farmers.studyfit.domain.member.service;
 
 import com.farmers.studyfit.domain.member.entity.Member;
 import com.farmers.studyfit.domain.member.entity.Student;
+import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import com.farmers.studyfit.exception.UserNotFoundException;
@@ -50,11 +51,34 @@ public class MemberDetailsService implements UserDetailsService {
         return buildUserDetails(member);
     }
 
+//    public UserDetails loadUserById(Long memberId) {
+//        Optional<Member> memberOpt = teacherRepository.findById(memberId)
+//                .map(t -> (Member) t)
+//                .or(() -> studentRepository.findById(memberId).map(s -> (Member) s));
+//
+//        Member member = memberOpt
+//                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + memberId));
+//
+//        return buildUserDetails(member);
+//    }
+
     private UserDetails buildUserDetails(Member member) {
         return User.builder()
                 .username(member.getLoginId())
                 .password(member.getPasswordHash())
                 .roles(member instanceof Student ? "STUDENT" : "TEACHER")
                 .build();
+    }
+
+    public UserDetails loadStudentById(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("학생을 찾을 수 없습니다: " + id));
+        return buildUserDetails(student);
+    }
+
+    public UserDetails loadTeacherById(Long id) {
+        Teacher teacher = teacherRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("선생님을 찾을 수 없습니다: " + id));
+        return buildUserDetails(teacher);
     }
 }
