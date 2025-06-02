@@ -6,7 +6,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SetColorRequestDto {
-    private Long studentId;
-    private Long teacherId;
+    private Long connectionId;
     private String themeColor;
 }

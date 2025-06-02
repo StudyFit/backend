@@ -29,21 +29,19 @@ public class ConnectionController {
     }
 
     @PostMapping("/response")
-    public Response responseConnection(@RequestBody ResponseConnectionRequestDto responseConnectionResponseDto) {
-        if (responseConnectionResponseDto.isAccepted()) {
-            connectionService.acceptConnection(responseConnectionResponseDto.getStudentId(),
-                    responseConnectionResponseDto.getTeacherId());
+    public Response responseConnection(@RequestBody ResponseConnectionRequestDto responseConnectionRequestDto) {
+        if (responseConnectionRequestDto.getAction().equals("ACCEPTED")) {
+            connectionService.acceptConnection(responseConnectionRequestDto.getConnectionId());
             return Response.success(ACCEPT_CONNECTION_SUCCESS);
         } else {
-            connectionService.rejectConnection(responseConnectionResponseDto.getStudentId(),
-                    responseConnectionResponseDto.getTeacherId());
+            connectionService.rejectConnection(responseConnectionRequestDto.getConnectionId());
             return Response.success(REJECT_CONNECTION_SUCCESS);
         }
     }
 
     @PatchMapping("/color")
     public Response setTeacherColor(@RequestBody SetColorRequestDto setColorRequestDto) {
-        connectionService.setTeacherColor(setColorRequestDto.getStudentId(), setColorRequestDto.getTeacherId(), setColorRequestDto.getThemeColor());
+        connectionService.setTeacherColor(setColorRequestDto.getConnectionId(), setColorRequestDto.getThemeColor());
         return Response.success(SET_COLOR_SUCCESS);
     }
 
