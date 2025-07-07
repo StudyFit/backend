@@ -12,9 +12,9 @@ import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
-import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import com.farmers.studyfit.domain.member.service.MemberService;
-import com.farmers.studyfit.exception.ConnectionNotFoundException;
+import com.farmers.studyfit.exception.CustomException;
+import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -68,7 +68,7 @@ public class ConnectionService {
 
     public void acceptConnection(Long connectionId) {
         Connection connection = connectionRepository.findById(connectionId)
-                .orElseThrow(() -> new ConnectionNotFoundException("연결을 찾을 수 없습니다: " + connectionId));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
         connection.setStatus(ConnectionState.ACCEPTED);
         connectionRepository.save(connection);
         LocalDate startDate = connection.getStartDate();
@@ -98,7 +98,7 @@ public class ConnectionService {
 
     public void rejectConnection(Long connectionId) {
         Connection connection = connectionRepository.findById(connectionId)
-            .orElseThrow(() -> new ConnectionNotFoundException("연결을 찾을 수 없습니다: " + connectionId));
+            .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
     connection.setStatus(ConnectionState.REJECTED);
     connectionRepository.save(connection);
     }
@@ -106,7 +106,7 @@ public class ConnectionService {
     public void setTeacherColor(Long connectionId, String themeColor) {
         Connection connection = connectionRepository
                 .findById(connectionId)
-                .orElseThrow(() -> new RuntimeException("요청된 연결이 존재하지 않습니다"));
+                .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
         connection.setTeacherColor(themeColor);
         connectionRepository.save(connection);
     }

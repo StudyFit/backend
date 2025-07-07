@@ -5,7 +5,8 @@ import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
-import com.farmers.studyfit.exception.UserNotFoundException;
+import com.farmers.studyfit.exception.CustomException;
+import com.farmers.studyfit.exception.ErrorCode;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class MemberDetailsService implements UserDetailsService {
 
         // 3) 없으면 예외
         Member member = memberOpt
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + loginId));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         return buildUserDetails(member);
     }
@@ -46,7 +47,7 @@ public class MemberDetailsService implements UserDetailsService {
                 .or(()-> teacherRepository.findById(memberId).map(t->(Member)t));
 
         Member member = memberOpt
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: " + memberId));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         return buildUserDetails(member);
     }
@@ -72,13 +73,13 @@ public class MemberDetailsService implements UserDetailsService {
 
     public UserDetails loadStudentById(Long id) {
         Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("학생을 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return buildUserDetails(student);
     }
 
     public UserDetails loadTeacherById(Long id) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("선생님을 찾을 수 없습니다: " + id));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
         return buildUserDetails(teacher);
     }
 }

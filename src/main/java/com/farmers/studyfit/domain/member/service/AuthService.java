@@ -12,9 +12,7 @@ import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.RefreshTokenRepository;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
-import com.farmers.studyfit.exception.DuplicateLoginIdException;
-import com.farmers.studyfit.exception.UnAuthorizedException;
-import com.farmers.studyfit.exception.UserNotFoundException;
+import com.farmers.studyfit.exception.*;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -68,7 +66,7 @@ public class AuthService {
 
     private void checkLoginIdDuplicateCheck(String loginId){
         if(studentRepository.existsByLoginId(loginId)|| teacherRepository.existsByLoginId(loginId)){
-            throw new DuplicateLoginIdException("중복된 아이디 입니다.");
+            throw new CustomException(ErrorCode.DUPLICATE_LOGIN_EXCEPTION);
         }
     }
 
@@ -78,11 +76,11 @@ public class AuthService {
                 .map(s -> (Member)s)
                 .orElseGet(() ->
                         teacherRepository.findByLoginId(dto.getLoginId())
-                                .orElseThrow(() -> new UsernameNotFoundException("사용자 없음"))
+                                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND))
                 );
 
         if (!passwordEncoder.matches(dto.getPassword(), member.getPasswordHash())) {
-            throw new BadCredentialsException("비밀번호 불일치");
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
         }
 
         // 토큰 발급·저장 로직 (이전과 동일)
@@ -122,7 +120,7 @@ public class AuthService {
                 );
 
         Member member = memberOpt
-                .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: "+memberId));
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
         refreshTokenRepository.deleteAllByMemberId(member.getId());
     }
@@ -131,12 +129,12 @@ public class AuthService {
     public TokenResponseDto refreshAccessToken(String jti) {
         // 1) JTI 로 RefreshToken 조회
         RefreshToken stored = refreshTokenRepository.findByJti(jti)
-                .orElseThrow(() -> new UnAuthorizedException("유효하지 않은 리프레시 토큰입니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOCKEN));
 
         // 2) 만료 검사
         if (stored.getExpiry().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.deleteById(stored.getId());  // 만료된 건 지워 두기
-            throw new UnAuthorizedException("리프레시 토큰이 만료되었습니다.");
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOCKEN);
         }
 
         // 3) 회원 조회
@@ -144,7 +142,7 @@ public class AuthService {
         Member member = studentRepository.findById(memberId)
                 .map(s -> (Member)s)
                 .orElseGet(() -> teacherRepository.findById(memberId)
-                        .orElseThrow(() -> new UserNotFoundException("사용자를 찾을 수 없습니다: "+memberId)));
+                        .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND)));
 
         // 4) 신규 액세스 토큰(짧게) + 신규 리프레시 토큰(회전)
         String newAccess  = tokenProvider.createAccessToken(member);
