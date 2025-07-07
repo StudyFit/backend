@@ -20,3 +20,13 @@ jwt:
   secret: "여기에-64자-이상의-랜덤-시크릿-키-입력하세요"
   access-expiration-ms: 900000        # 15분
   refresh-expiration-ms: 1209600000   # 14일
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${ACCESS_KEY}
+      secret-key: ${SECRET_KEY}
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: ${S3_BUCKET}
