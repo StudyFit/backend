@@ -7,6 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface CalendarRepository extends JpaRepository<Calendar, Long> {
-    List<Calendar> findByDateBetween(LocalDate startDate, LocalDate endDate);
-
+    List<Calendar> findByDateBetweenAndStudentId(LocalDate startDate, LocalDate endDate, Long studentId);
+    List<Calendar> findByDateBetweenAndTeacherId(LocalDate startDate, LocalDate endDate, Long teacherId);
 }
