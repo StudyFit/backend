@@ -1,5 +1,5 @@
 package com.farmers.studyfit.domain.calendar.entity;
 
-public enum ScheduleType {
+public enum CalendarType {
     CLASS, ETC
 }
