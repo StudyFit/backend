@@ -21,7 +21,7 @@ public class CalendarService {
     private final MemberService memberService;
     private final CalendarRepository calendarRepository;
 
-    public List<ClassResponseDto> getStudentCalendarClass(LocalDate startDate, LocalDate endDate) {
+    /*public List<ClassResponseDto> getStudentCalendarClass(LocalDate startDate, LocalDate endDate) {
         Student student = memberService.getCurrentStudentMember();
         List<Calendar> calendarList = calendarRepository.findByDateBetween(startDate, endDate);
 
@@ -31,5 +31,5 @@ public class CalendarService {
 
 
     public List<HomeworkDateResponseDto> getCalendarHomework(String role, LocalDate startDate, LocalDate endDate) {
-    }
+    }*/
 }

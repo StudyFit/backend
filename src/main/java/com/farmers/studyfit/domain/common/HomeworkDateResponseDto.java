@@ -17,8 +17,9 @@ public class HomeworkDateResponseDto {
     private Long connectionId;
     private Long homeworkDateId;
     private LocalDate date;
-    private String name;
-    private String grade; // 학생이 조회할 경우 null
+    private String teacherName;
+    private String studentName;
+    private String grade;
     private String subject;
     private Boolean isAllCompleted;
     private String feedback;

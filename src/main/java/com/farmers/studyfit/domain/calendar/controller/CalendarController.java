@@ -21,7 +21,7 @@ import static com.farmers.studyfit.response.Message.*;
 @RequiredArgsConstructor
 public class CalendarController {
     CalendarService calendarService;
-    @GetMapping
+    /*@GetMapping
     public Response getCalendarClass(
             @RequestParam("role") String role,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -42,6 +42,6 @@ public class CalendarController {
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getCalendarHomework(role, startDate, endDate));
-    }
+    }*/
 
 }
