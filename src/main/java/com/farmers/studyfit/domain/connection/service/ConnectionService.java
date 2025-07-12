@@ -1,7 +1,7 @@
 package com.farmers.studyfit.domain.connection.service;
 
 import com.farmers.studyfit.domain.calendar.entity.Calendar;
-import com.farmers.studyfit.domain.calendar.entity.ScheduleType;
+import com.farmers.studyfit.domain.calendar.entity.CalendarType;
 import com.farmers.studyfit.domain.calendar.repository.CalendarRepository;
 import com.farmers.studyfit.domain.connection.dto.*;
 import com.farmers.studyfit.domain.connection.entity.ClassTime;
@@ -87,7 +87,7 @@ public class ConnectionService {
                         .date(firstMatchingDate)
                         .startTime(startTime)
                         .endTime(endTime)
-                        .scheduleType(ScheduleType.CLASS).build();
+                        .calendarType(CalendarType.CLASS).build();
                 calendarRepository.save(calendar);
                 firstMatchingDate = firstMatchingDate.plusWeeks(1);
             }

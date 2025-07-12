@@ -3,7 +3,7 @@ spring:
     name: studyfit
 
   datasource:
-    url: jdbc:mysql://localhost:3306/studyfit?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true
+    url: jdbc:mysql://${MYSQL_URL}:${MYSQL_PORT}/${MYSQL_NAME}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
@@ -17,15 +17,15 @@ spring:
       ddl-auto: update
 
 jwt:
-  secret: "여기에-64자-이상의-랜덤-시크릿-키-입력하세요"
-  access-expiration-ms: 900000        # 15분
-  refresh-expiration-ms: 1209600000   # 14일
+  secret: ${JWT_SECRET}
+  access-expiration-ms: ${JWT_ACCESS_EXPIRE}        # 15분
+  refresh-expiration-ms: ${JWT_REFRESH_EXPIRE}
 
 cloud:
   aws:
     credentials:
-      access-key: ${ACCESS_KEY}
-      secret-key: ${SECRET_KEY}
+      access-key: ${S3_ACCESS_KEY}
+      secret-key: ${S3_SECRET_KEY}
     region:
       static: ap-northeast-2
     s3:
