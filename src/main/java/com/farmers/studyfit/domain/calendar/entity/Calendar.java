@@ -34,6 +34,6 @@ public class Calendar {
     private String content;
     private String memo;
     @Enumerated(EnumType.STRING)
-    private CalendarType calendarType;
+    private ScheduleType scheduleType;
 }
 

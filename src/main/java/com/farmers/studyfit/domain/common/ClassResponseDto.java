@@ -1,6 +1,6 @@
 package com.farmers.studyfit.domain.common;
 
-import com.farmers.studyfit.domain.calendar.entity.CalendarType;
+import com.farmers.studyfit.domain.calendar.entity.ScheduleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +28,6 @@ public class ClassResponseDto {
     private LocalTime classStartedAt;  // HH:mm 형식 문자열
     private LocalTime classEndedAt;    // HH:mm 형식 문자열
     private String content;
-    private CalendarType type;
+    private ScheduleType type;
 
 }

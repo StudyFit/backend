@@ -28,14 +28,14 @@ public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final HomeworkDateRepository homeworkDateRepository;
 
-    public List<ClassResponseDto> getStudentCalendarClass(LocalDate startDate, LocalDate endDate) {
+    public List<ClassResponseDto> getStudentCalendarSchedule(LocalDate startDate, LocalDate endDate) {
         Student student = memberService.getCurrentStudentMember();
         List<Calendar> calendarList = calendarRepository.findByDateBetweenAndStudentId(startDate, endDate, student.getId());
         List<ClassResponseDto> classResponseDtoList = calendarList.stream().map(this::calendarToClassResponse).toList();
         return classResponseDtoList;
 
     }
-    public List<ClassResponseDto> getTeacherCalendarClass(LocalDate startDate, LocalDate endDate) {
+    public List<ClassResponseDto> getTeacherCalendarSchedule(LocalDate startDate, LocalDate endDate) {
         Teacher teacher = memberService.getCurrentTeacherMember();
         List<Calendar> calendarList = calendarRepository.findByDateBetweenAndTeacherId(startDate, endDate, teacher.getId());
         List<ClassResponseDto> classResponseDtoList = calendarList.stream().map(this::calendarToClassResponse).toList();
@@ -69,7 +69,7 @@ public class CalendarService {
                 .classStartedAt(c.getStartTime())
                 .classEndedAt(c.getEndTime())
                 .content(c.getContent())
-                .type(c.getCalendarType()).build();
+                .type(c.getScheduleType()).build();
     }
     private HomeworkDateResponseDto homeworkDateToHomeDateResponse(HomeworkDate h){
         List<Homework> homeworkList = h.getHomeworkList();
