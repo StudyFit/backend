@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ConnectionRepository extends JpaRepository<Connection, Long> {
-    Optional<Connection> findByStudentIdAndTeacherIdAndStatus(Long studentId, Long teacherId, ConnectionState status);
     List<Connection> findByTeacherId(Long teacherId);
     List<Connection> findByStudentId(Long studentId);
 }

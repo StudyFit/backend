@@ -80,7 +80,6 @@ public class ConnectionService {
             LocalTime endTime = c.getEndTime();
             LocalDate firstMatchingDate = startDate.with(TemporalAdjusters.nextOrSame(targetDay));
 
-            // startDate와 endDate 사이에 들어오는 모든 날짜를 순회
             while (!firstMatchingDate.isAfter(endDate)) {
                 Calendar calendar = Calendar.builder()
                         .connection(connection)

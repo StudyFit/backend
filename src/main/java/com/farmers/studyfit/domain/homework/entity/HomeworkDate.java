@@ -22,8 +22,8 @@ public class HomeworkDate {
     private Connection connection;
     private LocalDate date;
 
-    @OneToMany
-    private List<Feedback> feedback;
+    @OneToOne
+    private Feedback feedback;
     @OneToMany
     private List<Homework> homeworkList;
 }
