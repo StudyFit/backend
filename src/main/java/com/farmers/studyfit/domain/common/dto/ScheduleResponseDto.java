@@ -1,5 +1,6 @@
-package com.farmers.studyfit.domain.common;
+package com.farmers.studyfit.domain.common.dto;
 
+import com.farmers.studyfit.domain.calendar.entity.ScheduleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClassResponseDto {
+public class ScheduleResponseDto {
 
     private Long connectionId;
     private Long calendarId;
@@ -21,11 +22,12 @@ public class ClassResponseDto {
     private String studentName;
     private String grade;
     private String subject;
-    private String themeColor;
+    private String teacherThemeColor;
+    private String studentThemeColor;
     private String address;
     private LocalTime classStartedAt;  // HH:mm 형식 문자열
     private LocalTime classEndedAt;    // HH:mm 형식 문자열
     private String content;
-    private String type;
+    private ScheduleType type;
 
 }

@@ -21,27 +21,32 @@ import static com.farmers.studyfit.response.Message.*;
 @RequiredArgsConstructor
 public class CalendarController {
     CalendarService calendarService;
-    /*@GetMapping
-    public Response getCalendarClass(
+    @GetMapping("/schedule")
+    public Response getCalendarSchedule(
             @RequestParam("role") String role,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
         if(role.equals("TEACHER")){
-            return Response.success(GET_CALENDAR_CLASS,calendarService.getTeacherCalendarClass(role, startDate, endDate));
+            return Response.success(GET_CALENDAR_CLASS,calendarService.getTeacherCalendarSchedule(startDate, endDate));
         }else if(role.equals("STUDENT")){
-            return Response.success(GET_CALENDAR_CLASS,calendarService.getStudentCalendarClass(role, startDate, endDate));
+            return Response.success(GET_CALENDAR_CLASS,calendarService.getStudentCalendarSchedule(startDate, endDate));
         }else throw new CustomException(ErrorCode.INVALID_ROLE);
 
     }
 
-    @GetMapping
+    @GetMapping("/homework")
     public Response getCalendarHomework(
             @RequestParam("role") String role,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getCalendarHomework(role, startDate, endDate));
-    }*/
+        if(role.equals("TEACHER")){
+            return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getTeacherCalendarHomework(startDate, endDate));
+        }else if (role.equals("STUDENT")){
+            return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getStudentCalendarHomework(startDate, endDate));
+        } else throw new CustomException(ErrorCode.INVALID_ROLE);
+
+    }
 
 }
