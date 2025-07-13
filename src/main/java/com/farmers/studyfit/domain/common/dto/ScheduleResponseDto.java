@@ -1,4 +1,4 @@
-package com.farmers.studyfit.domain.common;
+package com.farmers.studyfit.domain.common.dto;
 
 import com.farmers.studyfit.domain.calendar.entity.ScheduleType;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClassResponseDto {
+public class ScheduleResponseDto {
 
     private Long connectionId;
     private Long calendarId;

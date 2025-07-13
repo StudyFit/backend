@@ -1,4 +1,4 @@
-package com.farmers.studyfit.domain.common;
+package com.farmers.studyfit.domain.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
