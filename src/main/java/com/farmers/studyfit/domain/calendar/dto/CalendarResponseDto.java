@@ -9,5 +9,4 @@ import java.util.List;
 @Builder
 public class CalendarResponseDto {
     private List<ScheduleDto> schedules;
-    private List<HomeworkDto> homeworks;
 }

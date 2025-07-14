@@ -94,11 +94,4 @@ public class HomeworkService {
         homework.setCompleted(submitHomeworkRequestDto.isCompleted());
         homeworkRepository.save(homework);
     }
-
-    public List<HomeworkDto> getHomeworkListsByStudent(AssignHomeworkRequestDto assignHomeworkRequestDto) {
-        Student student = memberService.getCurrentStudentMember();
-        List<Connection> connections = connectionRepository.findByStudentId(student.getId());
-        List<HomeworkDto> getHomeworkListsByStudent();
-
-    }
 }
