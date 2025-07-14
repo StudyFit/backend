@@ -1,17 +1,22 @@
 package com.farmers.studyfit.domain.calendar.service;
 
+import com.farmers.studyfit.domain.calendar.dto.ScheduleRequestDto;
 import com.farmers.studyfit.domain.calendar.entity.Calendar;
 import com.farmers.studyfit.domain.calendar.repository.CalendarRepository;
 import com.farmers.studyfit.domain.common.converter.DtoConverter;
 import com.farmers.studyfit.domain.common.dto.ScheduleResponseDto;
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
 import com.farmers.studyfit.domain.common.dto.HomeworkResponseDto;
+import com.farmers.studyfit.domain.connection.entity.Connection;
+import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
 import com.farmers.studyfit.domain.homework.entity.Homework;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import com.farmers.studyfit.domain.homework.repository.HomeworkDateRepository;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.service.MemberService;
+import com.farmers.studyfit.exception.CustomException;
+import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +32,7 @@ public class CalendarService {
     private final CalendarRepository calendarRepository;
     private final HomeworkDateRepository homeworkDateRepository;
     private final DtoConverter dtoConverter;
+    private final ConnectionRepository connectionRepository;
 
     public List<ScheduleResponseDto> getStudentCalendarSchedule(LocalDate startDate, LocalDate endDate) {
         Student student = memberService.getCurrentStudentMember();
@@ -52,5 +58,20 @@ public class CalendarService {
         Student student = memberService.getCurrentStudentMember();
         List<HomeworkDate> homeworkDateList = homeworkDateRepository.findByDateBetweenAndStudentId(startDate, endDate, student.getId());
         return homeworkDateList.stream().map(homeworkDate -> dtoConverter.toHomeDateResponse(homeworkDate)).toList();
+    }
+
+    public Long postSchedule(ScheduleRequestDto input){
+        Connection c = connectionRepository.findById(input.getConnectionId()).orElseThrow(()->new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
+        Calendar calendar = Calendar.builder()
+                .connection(c)
+                .teacher(c.getTeacher())
+                .student(c.getStudent())
+                .date(input.getDate())
+                .startTime(input.getStartTime())
+                .endTime(input.getEndTime())
+                .content(input.getContent())
+                .scheduleType(input.getScheduleType()).build();
+        calendarRepository.save(calendar);
+        return calendar.getId();
     }
 }

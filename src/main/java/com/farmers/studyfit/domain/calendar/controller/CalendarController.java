@@ -1,15 +1,13 @@
 package com.farmers.studyfit.domain.calendar.controller;
 
+import com.farmers.studyfit.domain.calendar.dto.ScheduleRequestDto;
 import com.farmers.studyfit.domain.calendar.service.CalendarService;
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import com.farmers.studyfit.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
@@ -20,7 +18,7 @@ import static com.farmers.studyfit.response.Message.*;
 @RequestMapping("/calendar")
 @RequiredArgsConstructor
 public class CalendarController {
-    CalendarService calendarService;
+    private final CalendarService calendarService;
     @GetMapping("/schedule")
     public Response getCalendarSchedule(
             @RequestParam("role") String role,
@@ -47,6 +45,11 @@ public class CalendarController {
             return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getStudentCalendarHomework(startDate, endDate));
         } else throw new CustomException(ErrorCode.INVALID_ROLE);
 
+    }
+
+    @PostMapping("/schedule")
+    public Response postSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto){
+        return Response.success(POST_SCHEDULE, calendarService.postSchedule(scheduleRequestDto));
     }
 
 }

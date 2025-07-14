@@ -19,7 +19,7 @@ public class Calendar {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "connection_id")
     private Connection connection;
     @ManyToOne
@@ -32,7 +32,6 @@ public class Calendar {
     private LocalTime startTime;
     private LocalTime endTime;
     private String content;
-    private String memo;
     @Enumerated(EnumType.STRING)
     private ScheduleType scheduleType;
 }
