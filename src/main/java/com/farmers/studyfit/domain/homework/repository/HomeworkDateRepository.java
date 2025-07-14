@@ -10,4 +10,6 @@ import java.util.Optional;
 
 public interface HomeworkDateRepository extends JpaRepository<HomeworkDate, Long> {
     Optional<HomeworkDate> findByConnectionIdAndDate(Long connectionId, LocalDate date);
+    List<HomeworkDate> findByDateBetweenAndTeacherId(LocalDate startDate, LocalDate endDate, Long teacherId);
+    List<HomeworkDate> findByDateBetweenAndStudentId(LocalDate startDate, LocalDate endDate, Long studentId);
 }

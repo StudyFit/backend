@@ -1,6 +1,8 @@
 package com.farmers.studyfit.domain.calendar.entity;
 
 import com.farmers.studyfit.domain.connection.entity.Connection;
+import com.farmers.studyfit.domain.member.entity.Student;
+import com.farmers.studyfit.domain.member.entity.Teacher;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +22,12 @@ public class Calendar {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connection_id")
     private Connection connection;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
     private LocalDate date;
     private LocalTime startTime;
     private LocalTime endTime;
