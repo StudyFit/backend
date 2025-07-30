@@ -20,4 +20,7 @@ public class Message {
 
     public static final String GET_TODAY_CLASS = "오늘의 수업 불러오기 성공";
     public static final String POST_SCHEDULE = "일정 등록하기 성공";
+    public static final String PATCH_SCHEDULE = "세부 수업/기타 일정 수정하기 성공";
+    public static final String DELETE_SCHEDULE = "세부 수업/기타 일정 삭제하기 성공";
+
 }

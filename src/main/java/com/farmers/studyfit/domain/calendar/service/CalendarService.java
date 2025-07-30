@@ -20,6 +20,7 @@ import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -87,5 +88,29 @@ public class CalendarService {
         List<Calendar> calendarList = calendarRepository.findByDateAndTeacherIdAndScheduleType(date, teacher.getId(), ScheduleType.CLASS);
         List<ScheduleResponseDto> scheduleResponseDtoList = calendarList.stream().map(calendar -> dtoConverter.toScheduleResponse(calendar)).toList();
         return scheduleResponseDtoList;
+    }
+
+    @Transactional
+    public void patchSchedule(Long calendarId, ScheduleRequestDto dto) {
+        Calendar calendar = calendarRepository.findById(calendarId).orElseThrow(() -> new CustomException(ErrorCode.CALENDAR_NOT_FOUND));
+
+        if(dto.getConnectionId()!=null){
+            calendar.setConnection(connectionRepository.findById(dto.getConnectionId()).orElseThrow(()-> new CustomException(ErrorCode.CONNECTION_NOT_FOUND)));
+        }
+        if(dto.getDate()!=null){
+            calendar.setDate(dto.getDate());
+        }
+        if(dto.getStartTime()!=null){
+            calendar.setStartTime(dto.getStartTime());
+        }
+        if(dto.getEndTime()!=null){
+            calendar.setEndTime(dto.getEndTime());
+        }
+        if(dto.getContent()!=null){
+            calendar.setContent(dto.getContent());
+        }
+        if(dto.getScheduleType()!=null){
+            calendar.setScheduleType(dto.getScheduleType());
+        }
     }
 }

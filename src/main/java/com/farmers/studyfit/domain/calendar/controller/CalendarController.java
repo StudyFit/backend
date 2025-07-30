@@ -52,6 +52,12 @@ public class CalendarController {
         return Response.success(POST_SCHEDULE, calendarService.postSchedule(scheduleRequestDto));
     }
 
+    @PatchMapping("/schedule")
+    public Response patchSchedule(@RequestParam("calendarId") Long calendarId, @RequestBody ScheduleRequestDto scheduleRequestDto){
+        calendarService.patchSchedule(calendarId, scheduleRequestDto);
+        return Response.success(PATCH_SCHEDULE);
+    }
+
     @GetMapping("/todayclass")
     public Response getTodayClass(
             @RequestParam("role") String role,
