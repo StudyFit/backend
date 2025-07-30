@@ -58,6 +58,12 @@ public class CalendarController {
         return Response.success(PATCH_SCHEDULE);
     }
 
+    @DeleteMapping("/schedule")
+    public Response deleteSchedule(@RequestParam("calendarId") Long calendarId){
+        calendarService.deleteSchedule(calendarId);
+        return Response.success(DELETE_SCHEDULE);
+    }
+
     @GetMapping("/todayclass")
     public Response getTodayClass(
             @RequestParam("role") String role,

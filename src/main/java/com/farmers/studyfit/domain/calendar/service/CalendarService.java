@@ -113,4 +113,10 @@ public class CalendarService {
             calendar.setScheduleType(dto.getScheduleType());
         }
     }
+
+    @Transactional
+    public void deleteSchedule(Long calendarId) {
+        Calendar calendar = calendarRepository.findById(calendarId).orElseThrow(() -> new CustomException(ErrorCode.CALENDAR_NOT_FOUND));
+        calendarRepository.delete(calendar);
+    }
 }
