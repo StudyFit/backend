@@ -13,7 +13,8 @@ public enum ErrorCode {
     DUPLICATE_LOGIN_EXCEPTION(HttpStatus.BAD_REQUEST, "중복된 아이디 입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST,"비밀번호가 올바르지 않습니다."),
     INVALID_ROLE(HttpStatus.BAD_REQUEST,"TEACHER 혹은 STUDENT중 역할을 선택해주세요."),
-    CONNECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "연결을 찾을 수 없습니다.");
+    CONNECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "연결을 찾을 수 없습니다."),
+    CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "달력 일정을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

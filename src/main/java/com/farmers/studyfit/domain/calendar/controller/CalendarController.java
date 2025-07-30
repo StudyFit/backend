@@ -52,4 +52,27 @@ public class CalendarController {
         return Response.success(POST_SCHEDULE, calendarService.postSchedule(scheduleRequestDto));
     }
 
+    @PatchMapping("/schedule")
+    public Response patchSchedule(@RequestParam("calendarId") Long calendarId, @RequestBody ScheduleRequestDto scheduleRequestDto){
+        calendarService.patchSchedule(calendarId, scheduleRequestDto);
+        return Response.success(PATCH_SCHEDULE);
+    }
+
+    @DeleteMapping("/schedule")
+    public Response deleteSchedule(@RequestParam("calendarId") Long calendarId){
+        calendarService.deleteSchedule(calendarId);
+        return Response.success(DELETE_SCHEDULE);
+    }
+
+    @GetMapping("/todayclass")
+    public Response getTodayClass(
+            @RequestParam("role") String role,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        if(role.equals("TEACHER")){
+            return Response.success(GET_TODAY_CLASS,calendarService.getTeacherTodayClass(date));
+        }else if(role.equals("STUDENT")){
+            return Response.success(GET_TODAY_CLASS,calendarService.getStudentTodayClass(date));
+        }else throw new CustomException(ErrorCode.INVALID_ROLE);
+    }
+
 }
