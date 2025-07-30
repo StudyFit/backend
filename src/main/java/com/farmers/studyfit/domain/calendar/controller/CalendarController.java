@@ -52,4 +52,15 @@ public class CalendarController {
         return Response.success(POST_SCHEDULE, calendarService.postSchedule(scheduleRequestDto));
     }
 
+    @GetMapping("/todayclass")
+    public Response getTodayClass(
+            @RequestParam("role") String role,
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date){
+        if(role.equals("TEACHER")){
+            return Response.success(GET_TODAY_CLASS,calendarService.getTeacherTodayClass(date));
+        }else if(role.equals("STUDENT")){
+            return Response.success(GET_TODAY_CLASS,calendarService.getStudentTodayClass(date));
+        }else throw new CustomException(ErrorCode.INVALID_ROLE);
+    }
+
 }
