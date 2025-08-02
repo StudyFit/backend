@@ -40,9 +40,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 4. 토큰에서 클레임(Subject)을 파싱
                 Claims claims = tokenProvider.parseClaims(token);
                 Long memberId = Long.valueOf(claims.getSubject());
+                String role = claims.get("role", String.class);
+                UserDetails userDetails;
 
-                // 5. UserDetails 조회
-                UserDetails userDetails = memberDetailsService.loadUserById(memberId);
+                if ("ROLE_STUDENT".equals(role)) {
+                    userDetails = memberDetailsService.loadStudentById(memberId);
+                } else if ("ROLE_TEACHER".equals(role)) {
+                    userDetails = memberDetailsService.loadTeacherById(memberId);
+                } else {
+                    throw new RuntimeException("알 수 없는 사용자 역할입니다.");
+                }
+
+//                // 5. UserDetails 조회
+//                UserDetails userDetails = memberDetailsService.loadUserById(memberId);
 
                 // 6. 인증 객체 생성 및 SecurityContext에 저장
                 UsernamePasswordAuthenticationToken authentication =

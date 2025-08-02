@@ -2,12 +2,15 @@ package com.farmers.studyfit.domain.member.controller;
 
 import com.farmers.studyfit.domain.member.dto.*;
 import com.farmers.studyfit.domain.member.service.AuthService;
+import com.farmers.studyfit.response.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import static com.farmers.studyfit.response.Message.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -16,41 +19,41 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup/student")
-    public ResponseEntity<Void> signUpStudent(
+    public Response signUpStudent(
             @Valid @RequestBody StudentSignUpRequestDto dto) {
         authService.signUpStudent(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return Response.success(SIGNUP_SUCCESS);
     }
 
     @PostMapping("/signup/teacher")
-    public ResponseEntity<Void> signUpTeacher(
+    public Response signUpTeacher(
             @Valid @RequestBody TeacherSignUpRequestDto dto) {
         authService.signUpTeacher(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return Response.success(SIGNUP_SUCCESS);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDto> login(
+    public Response login(
             @Valid @RequestBody LoginRequestDto dto) {
         TokenResponseDto tokens = authService.login(dto);
-        return ResponseEntity.ok(tokens);
+        return Response.success(LOGIN_SUCCESS, tokens);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest req) {
+    public Response logout(HttpServletRequest req) {
         String header = req.getHeader("Authorization");
         if (header == null || !header.startsWith("Bearer ")) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return Response.failure(HttpStatus.BAD_REQUEST, "토큰 없음");
         }
         String accessToken = header.substring(7);
         authService.logout(accessToken);
-        return ResponseEntity.noContent().build();
+        return Response.success(LOGOUT_SUCCESS);
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponseDto> refresh(@RequestBody @Valid AccessTokenRequestDto dto) {
+    public Response refresh(@RequestBody @Valid AccessTokenRequestDto dto) {
         TokenResponseDto tokens = authService.refreshAccessToken(dto.getRefreshToken());
-        return ResponseEntity.ok(tokens);
+        return Response.success(TOKEN_SUCCESS, tokens);
     }
 
     @GetMapping("/test")

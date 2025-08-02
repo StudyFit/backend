@@ -4,12 +4,11 @@ import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
-import com.farmers.studyfit.exception.UserNotFoundException;
+import com.farmers.studyfit.exception.CustomException;
+import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,16 +17,16 @@ public class MemberService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
 
-    public Teacher getCurrentMemberTeacher() {
+
+    public Teacher getCurrentTeacherMember() {
         String loginId = SecurityContextHolder
                 .getContext()
                 .getAuthentication()
                 .getName();
-
         return teacherRepository
                 .findByLoginId(loginId)
                 .orElseThrow(() ->
-                        new UserNotFoundException("사용자를 찾을 수 없습니다.")
+                        new CustomException(ErrorCode.MEMBER_NOT_FOUND)
                 );
     }
 
@@ -39,7 +38,7 @@ public class MemberService {
         return studentRepository
                 .findByLoginId(loginId)
                 .orElseThrow(() ->
-                        new UserNotFoundException("사용자를 찾을 수 없습니다.")
+                        new CustomException(ErrorCode.MEMBER_NOT_FOUND)
                 );
     }
 }
