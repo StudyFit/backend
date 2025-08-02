@@ -1,18 +1,13 @@
 spring:
   application:
     name: studyfit
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
   datasource:
-    url: jdbc:mysql://${MYSQL_URL}:${MYSQL_PORT}/${MYSQL_NAME}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:postgresql://${DB_URL}/${DB_NAME}
+    driver-class-name: org.postgresql.Driver
     username: root
     password: 1234
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
     show-sql: true
     hibernate:
