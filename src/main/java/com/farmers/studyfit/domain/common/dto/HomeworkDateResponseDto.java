@@ -21,7 +21,7 @@ public class HomeworkDateResponseDto {
     private String studentName;
     private String grade;
     private String subject;
-    private Boolean isAllCompleted;
+    private Boolean isAllChecked;
     private String feedback;
     private List<HomeworkResponseDto> homeworkList;
 }

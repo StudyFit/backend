@@ -13,6 +13,6 @@ public class HomeworkResponseDto {
 
     private Long homeworkId;
     private String content;
-    private Boolean isCompleted;
+    private Boolean isChecked;
     private Boolean isPhotoRequired;
 }

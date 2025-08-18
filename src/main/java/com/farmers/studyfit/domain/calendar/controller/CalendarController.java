@@ -33,20 +33,6 @@ public class CalendarController {
 
     }
 
-    @GetMapping("/homework")
-    public Response getCalendarHomework(
-            @RequestParam("role") String role,
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
-    ) {
-        if(role.equals("TEACHER")){
-            return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getTeacherCalendarHomework(startDate, endDate));
-        }else if (role.equals("STUDENT")){
-            return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getStudentCalendarHomework(startDate, endDate));
-        } else throw new CustomException(ErrorCode.INVALID_ROLE);
-
-    }
-
     @PostMapping("/schedule")
     public Response postSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto){
         return Response.success(POST_SCHEDULE, calendarService.postSchedule(scheduleRequestDto));
@@ -74,5 +60,4 @@ public class CalendarController {
             return Response.success(GET_TODAY_CLASS,calendarService.getStudentTodayClass(date));
         }else throw new CustomException(ErrorCode.INVALID_ROLE);
     }
-
 }
