@@ -83,6 +83,8 @@ public class ConnectionService {
             while (!firstMatchingDate.isAfter(endDate)) {
                 Calendar calendar = Calendar.builder()
                         .connection(connection)
+                        .teacher(connection.getTeacher())
+                        .student(connection.getStudent())
                         .date(firstMatchingDate)
                         .startTime(startTime)
                         .endTime(endTime)
