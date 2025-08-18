@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubmitHomeworkRequestDto {
-    private Long homeworkId;
-    private boolean isCompleted;
+public class CheckHomeworkRequestDto {
+    private boolean isChecked;
 }

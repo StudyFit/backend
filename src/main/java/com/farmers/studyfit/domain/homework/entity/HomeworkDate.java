@@ -29,9 +29,7 @@ public class HomeworkDate {
     @JoinColumn(name = "student_id")
     private Student student;
     private LocalDate date;
-
-    @OneToOne
-    private Feedback feedback;
-    @OneToMany
+    private String feedback;
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Homework> homeworkList;
 }

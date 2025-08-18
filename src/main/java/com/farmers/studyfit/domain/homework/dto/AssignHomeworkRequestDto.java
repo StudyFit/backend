@@ -10,9 +10,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AssignHomeworkRequestDto {
-    private Long connectionId;
     private LocalDate date;
     private String content;
-    private boolean isCompleted;
     private boolean isPhotoRequired;
 }

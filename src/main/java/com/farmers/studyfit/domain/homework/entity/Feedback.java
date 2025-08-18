@@ -16,6 +16,5 @@ public class Feedback {
     @ManyToOne
     @JoinColumn(name = "homework_date_id")
     private HomeworkDate homeworkDate;
-
-    private String content;
+    private String feedback;
 }

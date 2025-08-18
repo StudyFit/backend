@@ -14,6 +14,10 @@ public class Message {
     public static final String SEARCH_STUDENT_LIST_SUCCESS = "학생 목록 조회하기 성공";
     public static final String SEARCH_TEACHER_LIST_SUCCESS = "선생님 목록 조회하기 성공";
     public static final String ASSIGN_HOMEWORK_SUCCESS = "숙제 등록하기 성공";
+    public static final String ASSIGN_FEEDBACK_SUCCESS = "피드백 등록하기 성공";
+    public static final String CHECK_HOMEWORK_SUCCESS = "숙제 제출하기 성공";
+    public static final String GET_HOMEWORK_LIST_BY_STUDENT_SUCCESS = "학생별 숙제 목록 불러오기 성공";
+    public static final String GET_HOMEWORK_LIST_BY_DATE_SUCCESS = "날짜별 숙제 목록 불러오기 성공";
 
     public static final String GET_CALENDAR_CLASS = "캘린더 수업, 일정 불러오기 성공";
     public static final String GET_CALENDAR_HOMEWORK = "캘린더 숙제 불러오기 성공";

@@ -46,7 +46,5 @@ public class CalendarController {
         }else if (role.equals("STUDENT")){
             return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getStudentCalendarHomework(startDate, endDate));
         } else throw new CustomException(ErrorCode.INVALID_ROLE);
-
     }
-
 }
