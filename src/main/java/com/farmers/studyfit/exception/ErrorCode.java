@@ -16,7 +16,7 @@ public enum ErrorCode {
     CONNECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "연결을 찾을 수 없습니다."),
     HOMEWORK_DATE_NOT_FOUND(HttpStatus.NOT_FOUND, "날짜를 찾을 수 없습니다."),
     HOMEWORK_NOT_FOUND(HttpStatus.NOT_FOUND, "숙제를 찾을 수 없습니다."),
-    ACCESS_DENIED(HttpStatus.NOT_FOUND, "권한을 거부되었습니다.");
+    ACCESS_DENIED(HttpStatus.NOT_FOUND, "권한이 거부되었습니다."),
     CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "달력 일정을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
