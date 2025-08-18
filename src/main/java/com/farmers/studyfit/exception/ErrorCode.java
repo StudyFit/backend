@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum ErrorCode {
+    // NOT_FOUND 404
+    // BAD_REQUEST 400
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원을 찾을 수 없습니다."),
     INVALID_REFRESH_TOCKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 리프레시 토큰입니다."),
     EXPIRED_REFRESH_TOCKEN(HttpStatus.BAD_REQUEST, "리프레시 토큰이 만료되었습니다."),
