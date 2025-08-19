@@ -127,12 +127,12 @@ public class AuthService {
     public TokenResponseDto refreshAccessToken(String jti) {
         // 1) JTI 로 RefreshToken 조회
         RefreshToken stored = refreshTokenRepository.findByJti(jti)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOCKEN));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
 
         // 2) 만료 검사
         if (stored.getExpiry().isBefore(LocalDateTime.now())) {
             refreshTokenRepository.deleteById(stored.getId());  // 만료된 건 지워 두기
-            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOCKEN);
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
         }
 
         // 3) 회원 조회
