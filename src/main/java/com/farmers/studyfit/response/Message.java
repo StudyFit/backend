@@ -14,6 +14,7 @@ public class Message {
     public static final String SEARCH_STUDENT_LIST_SUCCESS = "학생 목록 조회하기 성공";
     public static final String SEARCH_TEACHER_LIST_SUCCESS = "선생님 목록 조회하기 성공";
     public static final String POST_HOMEWORK_SUCCESS = "숙제 등록하기 성공";
+    public static final String PATCH_HOMEWORK_SUCCESS = "숙제 수정하기 성공";
     public static final String DELETE_HOMEWORK_SUCCESS = "숙제 삭제하기 성공";
     public static final String POST_FEEDBACK_SUCCESS = "피드백 등록하기 성공";
     public static final String DELETE_FEEDBACK_SUCCESS = "피드백 삭제하기 성공";

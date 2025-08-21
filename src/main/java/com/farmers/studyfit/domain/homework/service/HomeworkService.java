@@ -5,7 +5,7 @@ import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
 import com.farmers.studyfit.domain.connection.entity.Connection;
 import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
 import com.farmers.studyfit.domain.homework.dto.PostFeedbackRequestDto;
-import com.farmers.studyfit.domain.homework.dto.PostHomeworkRequestDto;
+import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.entity.Homework;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
@@ -33,7 +33,7 @@ public class HomeworkService {
     private final DtoConverter dtoConverter;
 
     @Transactional
-    public void postHomework(Long connectionId, PostHomeworkRequestDto postHomeworkRequestDto) {
+    public void postHomework(Long connectionId, HomeworkRequestDto postHomeworkRequestDto) {
         Connection connection = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
 
@@ -56,6 +56,17 @@ public class HomeworkService {
                 .build();
 
         homeworkRepository.save(homework);
+    }
+
+    // 학생이 체크 미완료된 상태에서만 선생님이 숙제 수정 가능 -> 유빈이가 해준대
+    @Transactional
+    public void patchHomework(Long homeworkId, HomeworkRequestDto homeworkRequestDto) {
+        Homework homework = homeworkRepository.findById(homeworkId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
+
+        if (homeworkRequestDto.getContent() != null) {
+            homework.setContent(homeworkRequestDto.getContent());
+        }
     }
 
     @Transactional

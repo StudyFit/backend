@@ -8,7 +8,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostHomeworkRequestDto {
+public class HomeworkRequestDto {
     private LocalDate date;
     private String content;
     private boolean isPhotoRequired;

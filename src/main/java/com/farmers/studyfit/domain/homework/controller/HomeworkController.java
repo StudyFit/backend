@@ -2,7 +2,7 @@ package com.farmers.studyfit.domain.homework.controller;
 
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
 import com.farmers.studyfit.domain.homework.dto.PostFeedbackRequestDto;
-import com.farmers.studyfit.domain.homework.dto.PostHomeworkRequestDto;
+import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.service.HomeworkService;
 import com.farmers.studyfit.response.Response;
@@ -23,9 +23,16 @@ public class HomeworkController {
 
     //(선생님) 숙제 등록
     @PostMapping("/{connectionId}")
-    public Response assignHomework(@PathVariable("connectionId") Long connectionId, @RequestBody PostHomeworkRequestDto postHomeworkRequestDto) {
-        homeworkService.postHomework(connectionId, postHomeworkRequestDto);
+    public Response assignHomework(@PathVariable("connectionId") Long connectionId, @RequestBody HomeworkRequestDto homeworkRequestDto) {
+        homeworkService.postHomework(connectionId, homeworkRequestDto);
         return Response.success(POST_HOMEWORK_SUCCESS);
+    }
+
+    // 숙제 수정하기
+    @PatchMapping("/{connectionId}")
+    public Response postHomework(@PathVariable("connectionId") Long connectionId, @RequestBody HomeworkRequestDto homeworkRequestDto) {
+        homeworkService.patchHomework(connectionId, homeworkRequestDto);
+        return Response.success(PATCH_HOMEWORK_SUCCESS);
     }
 
     // 숙제 삭제하기
