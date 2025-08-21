@@ -22,7 +22,7 @@ public class ConnectionController {
         return Response.success(SEARCH_STUDENT_SUCCESS, studentInfo);
     }
 
-    @PostMapping("/request")
+    @PatchMapping("/request")
     public Response requestConnection(@RequestBody RequestConnectionRequestDto requestConnectionRequestDto) {
         connectionService.requestConnection(requestConnectionRequestDto);
         return Response.success(REQUEST_CONNECTION_SUCCESS);
