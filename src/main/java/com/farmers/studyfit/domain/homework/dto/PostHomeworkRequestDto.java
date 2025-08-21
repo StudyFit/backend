@@ -1,6 +1,5 @@
 package com.farmers.studyfit.domain.homework.dto;
 
-import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -9,7 +8,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AssignHomeworkRequestDto {
+public class PostHomeworkRequestDto {
     private LocalDate date;
     private String content;
     private boolean isPhotoRequired;
