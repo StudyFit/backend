@@ -32,14 +32,14 @@ public class DtoConverter {
                 .content(c.getContent())
                 .type(c.getScheduleType()).build();
     }
-    public HomeworkDateResponseDto toHomeDateResponse(HomeworkDate h){
+    public HomeworkDateResponseDto toHomeworkDateResponse(HomeworkDate h){
         List<Homework> homeworkList = h.getHomeworkList();
         List<HomeworkResponseDto> homeworkResponseDtoList = homeworkList.stream()
                 .map(this::homeworkToHomeworkResponse)
                 .toList();
 
-        boolean isAllCompleted = homeworkList.stream()
-                .allMatch(Homework::isCompleted);
+        boolean isAllChecked = homeworkList.stream()
+                .allMatch(Homework::isChecked);
         return HomeworkDateResponseDto.builder()
                 .connectionId(h.getConnection().getId())
                 .homeworkDateId(h.getId())
@@ -48,7 +48,7 @@ public class DtoConverter {
                 .studentName(h.getStudent().getName())
                 .grade(h.getStudent().getSchool()+h.getStudent().getGrade())
                 .subject(h.getConnection().getSubject())
-                .isAllCompleted(isAllCompleted)
+                .isAllChecked(isAllChecked)
                 //.feedback(h.getFeedback())
                 .homeworkList(homeworkResponseDtoList)
                 .build();
@@ -57,7 +57,6 @@ public class DtoConverter {
         return HomeworkResponseDto.builder()
                 .homeworkId(h.getId())
                 .content(h.getContent())
-                .isCompleted(h.isCompleted())
-                .isPhotoRequired(h.isPhotoRequired()).build();
+                .isChecked(h.isChecked()).build();
     }
 }

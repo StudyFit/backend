@@ -17,6 +17,7 @@ import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ConnectionService {
     private final StudentRepository studentRepository;
     private final ConnectionRepository connectionRepository;
@@ -43,6 +45,7 @@ public class ConnectionService {
 
     }
 
+    @Transactional
     public void requestConnection(RequestConnectionRequestDto requestConnectionRequestDto) {
         Student student = studentRepository.findById(requestConnectionRequestDto.getStudentId()).orElseThrow();
         Connection connection = Connection.builder()
@@ -80,7 +83,6 @@ public class ConnectionService {
             LocalTime endTime = c.getEndTime();
             LocalDate firstMatchingDate = startDate.with(TemporalAdjusters.nextOrSame(targetDay));
 
-            // startDate와 endDate 사이에 들어오는 모든 날짜를 순회
             while (!firstMatchingDate.isAfter(endDate)) {
                 Calendar calendar = Calendar.builder()
                         .connection(connection)

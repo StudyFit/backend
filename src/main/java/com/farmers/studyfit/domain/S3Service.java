@@ -43,4 +43,3 @@ public class S3Service {
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
     }
 }
-

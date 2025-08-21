@@ -17,6 +17,12 @@ public class Homework {
     @JoinColumn(name = "homework_date_id")
     private HomeworkDate homeworkDate;
     private String content;
-    private boolean isCompleted;
-    private boolean isPhotoRequired;
+    private boolean isChecked;
+    public void setChecked(boolean isChecked) {
+        this.isChecked = isChecked;
+    }
+
+    public boolean isChecked() {
+        return this.isChecked;
+    }
 }

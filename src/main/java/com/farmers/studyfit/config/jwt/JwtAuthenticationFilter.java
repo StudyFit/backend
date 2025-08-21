@@ -2,6 +2,8 @@ package com.farmers.studyfit.config.jwt;
 
 import com.farmers.studyfit.config.jwt.TokenProvider;
 import com.farmers.studyfit.domain.member.service.MemberDetailsService;
+import com.farmers.studyfit.exception.CustomException;
+import com.farmers.studyfit.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -48,12 +50,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 } else if ("ROLE_TEACHER".equals(role)) {
                     userDetails = memberDetailsService.loadTeacherById(memberId);
                 } else {
-                    throw new RuntimeException("알 수 없는 사용자 역할입니다.");
+                    throw new CustomException(ErrorCode.INVALID_ROLE);
                 }
-
-//                // 5. UserDetails 조회
-//                UserDetails userDetails = memberDetailsService.loadUserById(memberId);
-
                 // 6. 인증 객체 생성 및 SecurityContext에 저장
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
