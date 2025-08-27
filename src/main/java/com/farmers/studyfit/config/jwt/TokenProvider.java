@@ -2,6 +2,8 @@ package com.farmers.studyfit.config.jwt;
 
 import com.farmers.studyfit.domain.member.entity.Member;
 import com.farmers.studyfit.domain.member.entity.Student;
+import com.farmers.studyfit.exception.CustomException;
+import com.farmers.studyfit.exception.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -51,7 +53,7 @@ public class TokenProvider {
                 .compact();
     }
 
-    public Claims parseClaims(String token) throws JwtException {
+    public Claims parseClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -63,8 +65,10 @@ public class TokenProvider {
         try {
             parseClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.EXPIRED_ACCESS_TOKEN);
         } catch (JwtException e) {
-            return false;
+            throw new CustomException(ErrorCode.INVALID_ACCESS_TOKEN);
         }
     }
 
