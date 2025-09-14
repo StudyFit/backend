@@ -4,14 +4,13 @@ import com.farmers.studyfit.domain.common.converter.DtoConverter;
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
 import com.farmers.studyfit.domain.connection.entity.Connection;
 import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
-import com.farmers.studyfit.domain.homework.dto.AssignFeedbackRequestDto;
-import com.farmers.studyfit.domain.homework.dto.AssignHomeworkRequestDto;
+import com.farmers.studyfit.domain.homework.dto.PostFeedbackRequestDto;
+import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.entity.Homework;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import com.farmers.studyfit.domain.homework.repository.HomeworkDateRepository;
 import com.farmers.studyfit.domain.homework.repository.HomeworkRepository;
-import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.service.MemberService;
 import com.farmers.studyfit.exception.CustomException;
@@ -34,36 +33,63 @@ public class HomeworkService {
     private final DtoConverter dtoConverter;
 
     @Transactional
-    public void assignHomework(Long connectionId, AssignHomeworkRequestDto assignHomeworkRequestDto) {
+    public void postHomework(Long connectionId, HomeworkRequestDto postHomeworkRequestDto) {
         Connection connection = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
 
         HomeworkDate homeworkDate = homeworkDateRepository.findByConnectionIdAndDate(
-                connectionId, assignHomeworkRequestDto.getDate()
+                connectionId, postHomeworkRequestDto.getDate()
         ).orElseGet(() -> {
             HomeworkDate newDate = HomeworkDate.builder()
                     .connection(connection)
                     .teacher(connection.getTeacher())
                     .student(connection.getStudent())
-                    .date(assignHomeworkRequestDto.getDate())
+                    .date(postHomeworkRequestDto.getDate())
                     .build();
             return homeworkDateRepository.save(newDate);
         });
 
         Homework homework = Homework.builder()
                 .homeworkDate(homeworkDate)
-                .content(assignHomeworkRequestDto.getContent())
+                .content(postHomeworkRequestDto.getContent())
                 .isChecked(false)
                 .build();
 
         homeworkRepository.save(homework);
     }
 
+    // 학생이 체크 미완료된 상태에서만 선생님이 숙제 수정 가능 -> 유빈이가 해준대
     @Transactional
-    public void assignFeedback(Long homeworkDateId, AssignFeedbackRequestDto assignFeedbackRequestDto) {
+    public void patchHomework(Long homeworkId, HomeworkRequestDto homeworkRequestDto) {
+        Homework homework = homeworkRepository.findById(homeworkId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
+
+        if (homeworkRequestDto.getContent() != null) {
+            homework.setContent(homeworkRequestDto.getContent());
+        }
+    }
+
+    @Transactional
+    public void deleteHomework(Long connectionId) {
+        Homework homework = homeworkRepository.findById(connectionId).orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
+        homeworkRepository.delete(homework);
+    }
+
+    @Transactional
+    public void postFeedback(Long homeworkDateId, PostFeedbackRequestDto postFeedbackRequestDto) {
         HomeworkDate homeworkDate = homeworkDateRepository.findById(homeworkDateId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
-        homeworkDate.setFeedback(assignFeedbackRequestDto.getFeedback());
+        homeworkDate.setFeedback(postFeedbackRequestDto.getFeedback());
+    }
+
+    @Transactional
+    public void deleteFeedback(Long homeworkDateId) {
+        HomeworkDate homeworkDate = homeworkDateRepository.findById(homeworkDateId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
+        if (homeworkDate.getFeedback() == null || homeworkDate.getFeedback().isBlank()) {
+            throw new CustomException(ErrorCode.FEEDBACK_NOT_FOUND);
+        }
+        homeworkDate.setFeedback(null);
     }
 
     @Transactional
