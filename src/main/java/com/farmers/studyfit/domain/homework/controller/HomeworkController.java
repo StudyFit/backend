@@ -1,10 +1,9 @@
 package com.farmers.studyfit.domain.homework.controller;
 
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
-import com.farmers.studyfit.domain.homework.dto.AssignFeedbackRequestDto;
-import com.farmers.studyfit.domain.homework.dto.AssignHomeworkRequestDto;
+import com.farmers.studyfit.domain.homework.dto.PostFeedbackRequestDto;
+import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
-import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import com.farmers.studyfit.domain.homework.service.HomeworkService;
 import com.farmers.studyfit.response.Response;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +23,37 @@ public class HomeworkController {
 
     //(선생님) 숙제 등록
     @PostMapping("/{connectionId}")
-    public Response assignHomework(@PathVariable("connectionId") Long connectionId, @RequestBody AssignHomeworkRequestDto assignHomeworkRequestDto) {
-        homeworkService.assignHomework(connectionId, assignHomeworkRequestDto);
-        return Response.success(ASSIGN_HOMEWORK_SUCCESS);
+    public Response assignHomework(@PathVariable("connectionId") Long connectionId, @RequestBody HomeworkRequestDto homeworkRequestDto) {
+        homeworkService.postHomework(connectionId, homeworkRequestDto);
+        return Response.success(POST_HOMEWORK_SUCCESS);
     }
 
-    //(선생님) 피드백 등록
+    // 숙제 수정하기
+    @PatchMapping("/{connectionId}")
+    public Response postHomework(@PathVariable("connectionId") Long connectionId, @RequestBody HomeworkRequestDto homeworkRequestDto) {
+        homeworkService.patchHomework(connectionId, homeworkRequestDto);
+        return Response.success(PATCH_HOMEWORK_SUCCESS);
+    }
+
+    // 숙제 삭제하기
+    @DeleteMapping("/{connectionId}")
+    public Response deleteHomework(@PathVariable("connectionId") Long connectionId) {
+        homeworkService.deleteHomework(connectionId);
+        return Response.success(DELETE_HOMEWORK_SUCCESS);
+    }
+
+    //(선생님) 피드백 등록 및 수정하기
     @PatchMapping("/{homeworkDateId}/feedback")
-    public Response assignFeedback(@PathVariable("homeworkDateId") Long homeworkDateId, @RequestBody AssignFeedbackRequestDto assignFeedbackRequestDto) {
-        homeworkService.assignFeedback(homeworkDateId, assignFeedbackRequestDto);
-        return Response.success(ASSIGN_FEEDBACK_SUCCESS);
+    public Response postFeedback(@PathVariable("homeworkDateId") Long homeworkDateId, @RequestBody PostFeedbackRequestDto postFeedbackRequestDto) {
+        homeworkService.postFeedback(homeworkDateId, postFeedbackRequestDto);
+        return Response.success(POST_FEEDBACK_SUCCESS);
+    }
+
+    // 피드백 삭제하기
+    @DeleteMapping("/{homeworkDateId}/feedback")
+    public Response deleteFeedback(@PathVariable("homeworkDateId") Long homeworkDateId) {
+        homeworkService.deleteFeedback(homeworkDateId);
+        return Response.success(DELETE_FEEDBACK_SUCCESS);
     }
 
     //(학생) 숙제 체크하기

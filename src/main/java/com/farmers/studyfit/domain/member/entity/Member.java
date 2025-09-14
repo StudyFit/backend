@@ -27,4 +27,7 @@ public abstract class Member {
 
     @Column(nullable=false, length=20)
     private String phoneNumber;
+
+    @Column
+    private String profileImg;
 }
