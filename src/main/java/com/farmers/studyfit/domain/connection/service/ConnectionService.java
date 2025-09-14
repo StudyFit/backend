@@ -69,6 +69,7 @@ public class ConnectionService {
         }
     }
 
+    @Transactional
     public void acceptConnection(Long connectionId) {
         Connection connection = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
@@ -100,6 +101,7 @@ public class ConnectionService {
 
     }
 
+    @Transactional
     public void rejectConnection(Long connectionId) {
         Connection connection = connectionRepository.findById(connectionId)
             .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
