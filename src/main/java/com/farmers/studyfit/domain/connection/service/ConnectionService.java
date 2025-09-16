@@ -1,5 +1,6 @@
 package com.farmers.studyfit.domain.connection.service;
 
+import com.farmers.studyfit.domain.S3Service;
 import com.farmers.studyfit.domain.calendar.entity.Calendar;
 import com.farmers.studyfit.domain.calendar.entity.ScheduleType;
 import com.farmers.studyfit.domain.calendar.repository.CalendarRepository;
@@ -35,6 +36,7 @@ public class ConnectionService {
     private final ClassTimeRepository classTimeRepository;
     private final CalendarRepository calendarRepository;
     private final MemberService memberService;
+    private final S3Service s3Service;
 
     public SearchStudentResponseDto findStudentByLoginId(String loginId) {
         Student student = studentRepository.findByLoginId(loginId).orElseThrow();
@@ -133,6 +135,7 @@ public class ConnectionService {
                     .memo(connection.getMemo())
                     .address(connection.getAddress())
                     .friendStatus(connection.getStatus().name())
+                    .profileImg(s3Service.getFileUrl(student.getProfileImg()))
                     .build();
         }).collect(Collectors.toList());
     }
@@ -140,7 +143,6 @@ public class ConnectionService {
     public List<TeacherDto> getAllConnectedTeachersByStudent() {
         Student student = memberService.getCurrentStudentMember();
         List<Connection> connections = connectionRepository.findByStudentId(student.getId());
-
         return connections.stream().map(connection -> {
             Teacher teacher = connection.getTeacher();
             return TeacherDto.builder()
@@ -150,6 +152,7 @@ public class ConnectionService {
                     .subject(connection.getSubject())
                     .themeColor(connection.getTeacherColor())
                     .connectionStatus(connection.getStatus().name())
+                    .profileImg(s3Service.getFileUrl(teacher.getProfileImg()))
                     .build();
         }).collect(Collectors.toList());
     }

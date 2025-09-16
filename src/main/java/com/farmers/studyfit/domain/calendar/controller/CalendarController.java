@@ -60,4 +60,17 @@ public class CalendarController {
             return Response.success(GET_TODAY_CLASS,calendarService.getStudentTodayClass(date));
         }else throw new CustomException(ErrorCode.INVALID_ROLE);
     }
+
+    @GetMapping("/homeworks")
+    public Response getCalendarHomeworks(
+            @RequestParam("role") String role,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ){
+        if(role.equals("TEACHER")){
+            return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getTeacherCalendarHomeworks(startDate, endDate));
+        }else if(role.equals("STUDENT")){
+            return Response.success(GET_CALENDAR_HOMEWORK,calendarService.getStudentCalendarHomeworks(startDate, endDate));
+        }else throw new CustomException(ErrorCode.INVALID_ROLE);
+    }
 }

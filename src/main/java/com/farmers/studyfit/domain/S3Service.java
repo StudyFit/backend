@@ -40,6 +40,9 @@ public class S3Service {
     }
 
     public String getFileUrl(String fileName) {
+        if(fileName == null){
+            return null;
+        }
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
     }
 }

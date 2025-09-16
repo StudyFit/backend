@@ -19,7 +19,9 @@ public class ScheduleResponseDto {
     private Long calendarId;
     private LocalDate date;
     private String teacherName;
+    private String teacherProfileImg;
     private String studentName;
+    private String studentProfileImg;
     private String grade;
     private String subject;
     private String teacherThemeColor;
