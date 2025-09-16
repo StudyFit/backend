@@ -8,6 +8,7 @@ import lombok.*;
 public class StudentDto {
     private Long connectionId;
     private Long studentId;
+    private String profileImg;
     private String studentName;
     private String studentInfo;
     private String subject;
