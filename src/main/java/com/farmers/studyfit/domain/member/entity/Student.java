@@ -26,5 +26,4 @@ public class Student extends Member {
     private List<Calendar> calendarList;
     @OneToMany(mappedBy = "student")
     private List<HomeworkDate> homeworkDateList;
-
 }
