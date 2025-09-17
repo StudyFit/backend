@@ -1,6 +1,7 @@
 package com.farmers.studyfit.domain.homework.controller;
 
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
+import com.farmers.studyfit.domain.homework.dto.CurrentMonthRateResponse;
 import com.farmers.studyfit.domain.homework.dto.PostFeedbackRequestDto;
 import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
@@ -77,5 +78,12 @@ public class HomeworkController {
         List<HomeworkDateResponseDto> homeworkDateResponseDtoList = homeworkService.getHomeworkListByDate(homeworkDateId);
         return Response.success(GET_HOMEWORK_LIST_BY_DATE_SUCCESS,
                 homeworkDateResponseDtoList);
+    }
+
+    //이번 달 달성률 불러오기
+    @GetMapping("/rate/{connectionId}")
+    public Response getCurrentMonthRateofHomework(@PathVariable("connectionId") Long connectionId) {
+        CurrentMonthRateResponse currentMonthRateDto = homeworkService.getCurrentMonthRate(connectionId);
+        return Response.success(GET_CURRENT_MONTH_RATE_SUCCESS, currentMonthRateDto);
     }
 }
