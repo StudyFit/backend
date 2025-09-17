@@ -16,12 +16,16 @@ public class Homework {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_date_id")
     private HomeworkDate homeworkDate;
+    @Column(nullable = false, length = 1000)
     private String content;
+    @Column(nullable = false)
     private boolean isChecked;
+    @Column(nullable = false)
+    private boolean isPhotoRequired;  // 사진 필수 여부
+
     public void setChecked(boolean isChecked) {
         this.isChecked = isChecked;
     }
-
     public boolean isChecked() {
         return this.isChecked;
     }
