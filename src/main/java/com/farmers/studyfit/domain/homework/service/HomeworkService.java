@@ -62,6 +62,7 @@ public class HomeworkService {
         homeworkRepository.save(homework);
     }
 
+    // 학생이 체크 미완료된 상태에서만 선생님이 숙제 수정 가능 -> 유빈이가 해준대
     @Transactional
     public void patchHomework(Long homeworkId, HomeworkRequestDto homeworkRequestDto) {
         Homework homework = homeworkRepository.findById(homeworkId)
