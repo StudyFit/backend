@@ -35,7 +35,6 @@ public class CalendarService {
     private final HomeworkDateRepository homeworkDateRepository;
     private final DtoConverter dtoConverter;
     private final ConnectionRepository connectionRepository;
-
     public List<ScheduleResponseDto> getStudentCalendarSchedule(LocalDate startDate, LocalDate endDate) {
         Student student = memberService.getCurrentStudentMember();
         List<Calendar> calendarList = calendarRepository.findByDateBetweenAndStudentId(startDate, endDate, student.getId());

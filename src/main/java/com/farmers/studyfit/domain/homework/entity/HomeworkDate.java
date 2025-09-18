@@ -20,21 +20,26 @@ public class HomeworkDate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connection_id")
     private Connection connection;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
     private Student student;
 
     private LocalDate date;
     private String feedback;
+
     @OneToMany(mappedBy = "homeworkDate",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<Homework> homeworkList = new ArrayList<>(); // ★ 초기화
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    private List<Homework> homeworkList = new ArrayList<>();
 }
