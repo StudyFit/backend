@@ -35,30 +35,28 @@ public class HomeworkService {
     private final DtoConverter dtoConverter;
 
     @Transactional
-    public void postHomework(Long connectionId, HomeworkRequestDto postHomeworkRequestDto) {
+    public void postHomework(Long connectionId, HomeworkRequestDto homeworkRequestDto) {
         Connection connection = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
 
         HomeworkDate homeworkDate = homeworkDateRepository.findByConnection_IdAndDate(
-                connectionId, postHomeworkRequestDto.getDate()
+                connectionId, homeworkRequestDto.getDate()
         ).orElseGet(() -> {
             HomeworkDate newDate = HomeworkDate.builder()
                     .connection(connection)
                     .teacher(connection.getTeacher())
                     .student(connection.getStudent())
-                    .date(postHomeworkRequestDto.getDate())
+                    .date(homeworkRequestDto.getDate())
                     .build();
             return homeworkDateRepository.save(newDate);
         });
-
+        
         Homework homework = Homework.builder()
                 .homeworkDate(homeworkDate)
-                .content(postHomeworkRequestDto.getContent())
+                .content(homeworkRequestDto.getContent())
                 .isChecked(false)
                 .isPhotoRequired(false)
                 .build();
-
-        homeworkDate.getHomeworkList().add(homework);
         homeworkRepository.save(homework);
     }
 
