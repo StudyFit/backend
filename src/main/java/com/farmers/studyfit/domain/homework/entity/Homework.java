@@ -1,5 +1,6 @@
 package com.farmers.studyfit.domain.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class Homework {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "homework_date_id")
+    @JsonIgnore
     private HomeworkDate homeworkDate;
     @Column(nullable = false, length = 1000)
     private String content;
