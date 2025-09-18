@@ -31,9 +31,6 @@ public class HomeworkDate {
 
     private LocalDate date;
     private String feedback;
-    @OneToMany(mappedBy = "homeworkDate",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-            fetch = FetchType.LAZY)
+    @OneToMany
     private List<Homework> homeworkList;
 }

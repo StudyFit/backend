@@ -57,8 +57,6 @@ public class HomeworkService {
                 .isChecked(false)
                 .isPhotoRequired(false)
                 .build();
-
-        homeworkDate.getHomeworkList().add(homework);
         homeworkRepository.save(homework);
     }
 
