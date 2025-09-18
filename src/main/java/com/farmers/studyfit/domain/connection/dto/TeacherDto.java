@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class TeacherDto {
     private Long connectionId;
     private Long teacherId;
+    private String profileImg;
     private String teacherName;
     private String subject;
     private String themeColor;

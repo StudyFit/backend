@@ -124,7 +124,12 @@ public class AuthService {
     }
 
     @Transactional
-    public TokenResponseDto refreshAccessToken(String jti) {
+    public TokenResponseDto refreshAccessToken(String refreshToken) {
+        if (!tokenProvider.validateRefreshToken(refreshToken)) {
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+        String jti = tokenProvider.extractJti(refreshToken)
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
         // 1) JTI 로 RefreshToken 조회
         RefreshToken stored = refreshTokenRepository.findByJti(jti)
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
