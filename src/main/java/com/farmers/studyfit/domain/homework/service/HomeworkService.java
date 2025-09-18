@@ -4,6 +4,7 @@ import com.farmers.studyfit.domain.common.converter.DtoConverter;
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
 import com.farmers.studyfit.domain.connection.entity.Connection;
 import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
+import com.farmers.studyfit.domain.homework.dto.CurrentMonthRateResponse;
 import com.farmers.studyfit.domain.homework.dto.PostFeedbackRequestDto;
 import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class HomeworkService {
         Connection connection = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
 
-        HomeworkDate homeworkDate = homeworkDateRepository.findByConnectionIdAndDate(
+        HomeworkDate homeworkDate = homeworkDateRepository.findByConnection_IdAndDate(
                 connectionId, postHomeworkRequestDto.getDate()
         ).orElseGet(() -> {
             HomeworkDate newDate = HomeworkDate.builder()
@@ -53,8 +55,10 @@ public class HomeworkService {
                 .homeworkDate(homeworkDate)
                 .content(postHomeworkRequestDto.getContent())
                 .isChecked(false)
+                .isPhotoRequired(false)
                 .build();
 
+        homeworkDate.getHomeworkList().add(homework);
         homeworkRepository.save(homework);
     }
 
@@ -121,4 +125,38 @@ public class HomeworkService {
                 .map(dtoConverter::toHomeworkDateResponse)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public CurrentMonthRateResponse getCurrentMonthRate(Long connectionId) {
+        // 1) 소유권/권한
+        Teacher teacher = memberService.getCurrentTeacherMember();
+        Connection conn = connectionRepository.findById(connectionId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
+        if (!conn.getTeacher().getId().equals(teacher.getId())) {
+            throw new CustomException(ErrorCode.CONNECTION_NOT_FOUND);
+        }
+
+        YearMonth now = YearMonth.now();
+        LocalDate startDate = now.atDay(1);
+        LocalDate endDate   = now.atEndOfMonth();
+
+        List<Homework> list = homeworkRepository
+                .findAllWithDateByConnectionAndRange(connectionId, startDate, endDate);
+
+        long total = list.size();
+        long completed = list.stream().filter(Homework::isChecked).count();
+        double rate = (total == 0) ? 0.0 : round1(completed * 100.0 / total);
+        String status = (total == 0) ? "NO_HOMEWORK" : "HAS_HOMEWORK";
+
+        return new CurrentMonthRateResponse(
+                connectionId,
+                now.getYear(),
+                now.getMonthValue(),
+                total,
+                completed,
+                rate,
+                status
+        );
+    }
+    private static double round1(double v) { return Math.round(v * 10.0) / 10.0; }
 }
