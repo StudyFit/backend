@@ -19,6 +19,8 @@ public class ClassTime {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "connection_id")
     private Connection connection;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "day_of_week")
     private DayOfWeek day;
     private LocalTime startTime;
     private LocalTime endTime;
