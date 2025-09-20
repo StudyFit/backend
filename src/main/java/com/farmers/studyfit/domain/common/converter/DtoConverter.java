@@ -67,7 +67,7 @@ public class DtoConverter {
                 .grade(s.getSchool()+" "+s.getGrade())
                 .subject(c.getSubject())
                 .isAllCompleted(isAllChecked)
-                //.feedback(h.getFeedback())
+                .feedback(h.getFeedback())
                 .homeworkList(homeworkResponseDtoList)
                 .build();
     }
