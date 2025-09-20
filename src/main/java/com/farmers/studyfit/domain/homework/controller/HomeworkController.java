@@ -58,7 +58,7 @@ public class HomeworkController {
     }
 
     //(학생) 숙제 체크하기
-    @PostMapping("/{homeworkId}/check")
+    @PatchMapping("/{homeworkId}/check")
     public Response checkHomework(@PathVariable("homeworkId") Long homeworkId, @RequestBody CheckHomeworkRequestDto checkHomeworkRequestDto) {
         homeworkService.checkHomework(homeworkId, checkHomeworkRequestDto);
         return Response.success(CHECK_HOMEWORK_SUCCESS);
