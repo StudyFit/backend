@@ -19,11 +19,13 @@ public class HomeworkDateResponseDto {
     private LocalDate date;
     private String teacherName;
     private String teacherProfileImg;
+    private String teacherThemeColor;
     private String studentName;
     private String studentProfileImg;
+    private String studentThemeColor;
     private String grade;
     private String subject;
-    private Boolean isAllChecked;
+    private Boolean isAllCompleted;
     private String feedback;
     private List<HomeworkResponseDto> homeworkList;
 }
