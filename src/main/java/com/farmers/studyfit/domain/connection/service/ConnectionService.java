@@ -111,6 +111,7 @@ public class ConnectionService {
     connectionRepository.save(connection);
     }
 
+    @Transactional
     public void setTeacherColor(Long connectionId, String themeColor) {
         Connection connection = connectionRepository
                 .findById(connectionId)
