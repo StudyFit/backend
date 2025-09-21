@@ -170,14 +170,14 @@ public class HomeworkService {
         
         // 선생님인 경우
         if (teacherRepository.findByLoginId(loginId).isPresent()) {
-            Teacher teacher = getCurrentTeacherMember();
+            Teacher teacher = memberService.getCurrentTeacherMember();
             if (conn.getTeacher().getId().equals(teacher.getId())) {
                 isAuthorized = true;
             }
         }
         // 학생인 경우
         else if (studentRepository.findByLoginId(loginId).isPresent()) {
-            Student student = getCurrentStudentMember();
+            Student student = memberService.getCurrentStudentMember();
             if (conn.getStudent().getId().equals(student.getId())) {
                 isAuthorized = true;
             }
