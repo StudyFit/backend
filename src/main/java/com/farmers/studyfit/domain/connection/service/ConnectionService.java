@@ -157,4 +157,10 @@ public class ConnectionService {
                     .build();
         }).collect(Collectors.toList());
     }
+
+    @Transactional
+    public void deleteConnection(Long connectionId) {
+        Connection connection = connectionRepository.findById(connectionId).orElseThrow(()-> new RuntimeException());
+        connectionRepository.delete(connection);
+    }
 }

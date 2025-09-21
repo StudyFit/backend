@@ -56,4 +56,10 @@ public class ConnectionController {
         List<TeacherDto> teacherList = connectionService.getAllConnectedTeachersByStudent();
         return Response.success(SEARCH_TEACHER_LIST_SUCCESS, teacherList);
     }
+
+    @DeleteMapping("/{connectionId}")
+    public Response deleteConnection(@PathVariable("connectionId") Long connectionId) {
+        connectionService.deleteConnection(connectionId);
+        return Response.success("");
+    }
 }
