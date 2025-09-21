@@ -35,10 +35,10 @@ public class Connection {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "connection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ClassTime> classTimeList;
-    @OneToMany
+    @OneToMany(mappedBy = "connection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Calendar> calenderList;
-    @OneToMany
+    @OneToMany(mappedBy = "connection", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HomeworkDate> homeworkDateList;
 }

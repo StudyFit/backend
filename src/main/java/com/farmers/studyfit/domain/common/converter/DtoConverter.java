@@ -31,8 +31,10 @@ public class DtoConverter {
                 .date(c.getDate())
                 .teacherName(t.getName())
                 .teacherProfileImg(s3Service.getFileUrl(t.getProfileImg()))
+                .teacherThemeColor(co.getTeacherColor())
                 .studentName(s.getName())
                 .studentProfileImg(s3Service.getFileUrl(s.getProfileImg()))
+                .studentThemeColor(co.getStudentColor())
                 .grade(s.getSchool()+" "+s.getGrade())
                 .subject(co.getSubject())
                 .teacherThemeColor(co.getTeacherColor())
@@ -60,19 +62,36 @@ public class DtoConverter {
                 .date(h.getDate())
                 .teacherName(t.getName())
                 .teacherProfileImg(s3Service.getFileUrl(t.getProfileImg()))
+                .teacherThemeColor(c.getTeacherColor())
                 .studentName(s.getName())
                 .studentProfileImg(s3Service.getFileUrl(s.getProfileImg()))
+                .studentThemeColor(c.getStudentColor())
                 .grade(s.getSchool()+" "+s.getGrade())
                 .subject(c.getSubject())
-                .isAllChecked(isAllChecked)
-                //.feedback(h.getFeedback())
+                .isAllCompleted(isAllChecked)
+                .feedback(h.getFeedback())
                 .homeworkList(homeworkResponseDtoList)
                 .build();
     }
     public HomeworkResponseDto homeworkToHomeworkResponse(Homework h){
+        Boolean isCompleted = h.isChecked();
+        Boolean isPhotoRequired = h.isPhotoRequired();
+        Boolean isPhotoUploaded;
+        if(isPhotoRequired){
+            if (isCompleted){
+                isPhotoUploaded = true;
+            }else{
+                isPhotoUploaded = false;
+            }
+        } else {
+            isPhotoUploaded = null;
+        }
         return HomeworkResponseDto.builder()
                 .homeworkId(h.getId())
                 .content(h.getContent())
-                .isChecked(h.isChecked()).build();
+                .isCompleted(h.isChecked())
+                .isPhotoRequired(h.isPhotoRequired())
+                .isPhotoUploaded(isPhotoUploaded).build();
+
     }
 }
