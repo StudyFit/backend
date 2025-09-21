@@ -14,12 +14,16 @@ import com.farmers.studyfit.domain.homework.entity.HomeworkPhoto;
 import com.farmers.studyfit.domain.homework.repository.HomeworkDateRepository;
 import com.farmers.studyfit.domain.homework.repository.HomeworkRepository;
 import com.farmers.studyfit.domain.homework.repository.HomeworkPhotoRepository;
+import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
+import com.farmers.studyfit.domain.member.repository.StudentRepository;
+import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import com.farmers.studyfit.domain.member.service.MemberService;
 import com.farmers.studyfit.domain.S3Service;
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +39,8 @@ public class HomeworkService {
     private final HomeworkDateRepository homeworkDateRepository;
     private final HomeworkRepository homeworkRepository;
     private final HomeworkPhotoRepository homeworkPhotoRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final MemberService memberService;
     private final DtoConverter dtoConverter;
     private final S3Service s3Service;
@@ -155,12 +161,30 @@ public class HomeworkService {
 
     @Transactional(readOnly = true)
     public CurrentMonthRateResponse getCurrentMonthRate(Long connectionId) {
-        // 1) 소유권/권한
-        Teacher teacher = memberService.getCurrentTeacherMember();
+        // 권한 검증: 해당 연결의 선생님 또는 학생만 조회 가능
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
         Connection conn = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
-        if (!conn.getTeacher().getId().equals(teacher.getId())) {
-            throw new CustomException(ErrorCode.CONNECTION_NOT_FOUND);
+        
+        boolean isAuthorized = false;
+        
+        // 선생님인 경우
+        if (teacherRepository.findByLoginId(loginId).isPresent()) {
+            Teacher teacher = getCurrentTeacherMember();
+            if (conn.getTeacher().getId().equals(teacher.getId())) {
+                isAuthorized = true;
+            }
+        }
+        // 학생인 경우
+        else if (studentRepository.findByLoginId(loginId).isPresent()) {
+            Student student = getCurrentStudentMember();
+            if (conn.getStudent().getId().equals(student.getId())) {
+                isAuthorized = true;
+            }
+        }
+        
+        if (!isAuthorized) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         YearMonth now = YearMonth.now();
