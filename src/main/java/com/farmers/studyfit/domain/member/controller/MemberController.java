@@ -1,7 +1,5 @@
 package com.farmers.studyfit.domain.member.controller;
 
-import com.farmers.studyfit.domain.S3Service;
-import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.service.MemberService;
 import com.farmers.studyfit.response.Message;
 import com.farmers.studyfit.response.Response;

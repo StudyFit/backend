@@ -35,6 +35,7 @@ public class CalendarService {
     private final HomeworkDateRepository homeworkDateRepository;
     private final DtoConverter dtoConverter;
     private final ConnectionRepository connectionRepository;
+
     public List<ScheduleResponseDto> getStudentCalendarSchedule(LocalDate startDate, LocalDate endDate) {
         Student student = memberService.getCurrentStudentMember();
         List<Calendar> calendarList = calendarRepository.findByDateBetweenAndStudentId(startDate, endDate, student.getId());
@@ -42,18 +43,12 @@ public class CalendarService {
         return scheduleResponseDtoList;
 
     }
+
     public List<ScheduleResponseDto> getTeacherCalendarSchedule(LocalDate startDate, LocalDate endDate) {
         Teacher teacher = memberService.getCurrentTeacherMember();
         List<Calendar> calendarList = calendarRepository.findByDateBetweenAndTeacherId(startDate, endDate, teacher.getId());
         List<ScheduleResponseDto> scheduleResponseDtoList = calendarList.stream().map(calendar -> dtoConverter.toScheduleResponse(calendar)).toList();
         return scheduleResponseDtoList;
-    }
-
-    @Transactional(readOnly = true)
-    public List<HomeworkDateResponseDto> getTeacherCalendarHomeworks(LocalDate startDate, LocalDate endDate) {
-        Teacher teacher = memberService.getCurrentTeacherMember();
-        List<HomeworkDate> homeworkDateList = homeworkDateRepository.findByDateBetweenAndTeacherId(startDate, endDate, teacher.getId());
-        return homeworkDateList.stream().map(homeworkDate -> dtoConverter.toHomeworkDateResponse(homeworkDate)).toList();
     }
     @Transactional(readOnly = true)
     public List<HomeworkDateResponseDto> getStudentCalendarHomeworks(LocalDate startDate, LocalDate endDate) {

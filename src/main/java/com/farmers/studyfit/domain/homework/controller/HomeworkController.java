@@ -9,6 +9,7 @@ import com.farmers.studyfit.domain.homework.service.HomeworkService;
 import com.farmers.studyfit.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -57,9 +58,12 @@ public class HomeworkController {
         return Response.success(DELETE_FEEDBACK_SUCCESS);
     }
 
-    //(학생) 숙제 체크하기
-    @PatchMapping("/{homeworkId}/check")
-    public Response checkHomework(@PathVariable("homeworkId") Long homeworkId, @RequestBody CheckHomeworkRequestDto checkHomeworkRequestDto) {
+    //(학생) 숙제 체크하기 (사진 업로드 포함)
+    @PatchMapping(value = "/{homeworkId}/check", consumes = "multipart/form-data")
+    public Response checkHomework(@PathVariable("homeworkId") Long homeworkId, 
+                                 @RequestParam("isChecked") boolean isChecked,
+                                 @RequestParam(value = "photo", required = false) MultipartFile photo) {
+        CheckHomeworkRequestDto checkHomeworkRequestDto = new CheckHomeworkRequestDto(isChecked, photo);
         homeworkService.checkHomework(homeworkId, checkHomeworkRequestDto);
         return Response.success(CHECK_HOMEWORK_SUCCESS);
     }
