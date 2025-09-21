@@ -10,13 +10,20 @@ import com.farmers.studyfit.domain.homework.dto.HomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.dto.CheckHomeworkRequestDto;
 import com.farmers.studyfit.domain.homework.entity.Homework;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
+import com.farmers.studyfit.domain.homework.entity.HomeworkPhoto;
 import com.farmers.studyfit.domain.homework.repository.HomeworkDateRepository;
 import com.farmers.studyfit.domain.homework.repository.HomeworkRepository;
+import com.farmers.studyfit.domain.homework.repository.HomeworkPhotoRepository;
+import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
+import com.farmers.studyfit.domain.member.repository.StudentRepository;
+import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import com.farmers.studyfit.domain.member.service.MemberService;
+import com.farmers.studyfit.domain.S3Service;
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +38,12 @@ public class HomeworkService {
     private final ConnectionRepository connectionRepository;
     private final HomeworkDateRepository homeworkDateRepository;
     private final HomeworkRepository homeworkRepository;
+    private final HomeworkPhotoRepository homeworkPhotoRepository;
+    private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final MemberService memberService;
     private final DtoConverter dtoConverter;
+    private final S3Service s3Service;
 
     @Transactional
     public void postHomework(Long connectionId, HomeworkRequestDto homeworkRequestDto) {
@@ -55,12 +66,11 @@ public class HomeworkService {
                 .homeworkDate(homeworkDate)
                 .content(homeworkRequestDto.getContent())
                 .isChecked(false)
-                .isPhotoRequired(false)
+                .isPhotoRequired(homeworkRequestDto.isPhotoRequired())
                 .build();
         homeworkRepository.save(homework);
     }
 
-    // 학생이 체크 미완료된 상태에서만 선생님이 숙제 수정 가능 -> 유빈이가 해준대
     @Transactional
     public void patchHomework(Long homeworkId, HomeworkRequestDto homeworkRequestDto) {
         Homework homework = homeworkRepository.findById(homeworkId)
@@ -69,6 +79,7 @@ public class HomeworkService {
         if (homeworkRequestDto.getContent() != null) {
             homework.setContent(homeworkRequestDto.getContent());
         }
+        homework.setPhotoRequired(homeworkRequestDto.isPhotoRequired());
     }
 
     @Transactional
@@ -98,6 +109,30 @@ public class HomeworkService {
     public void checkHomework(Long homeworkId, CheckHomeworkRequestDto checkHomeworkRequestDto) {
         Homework homework = homeworkRepository.findById(homeworkId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
+        
+        // 숙제 체크 시 사진 필수 여부 검증
+        if (checkHomeworkRequestDto.isChecked()) {
+            if (homework.isPhotoRequired()) {
+                if (checkHomeworkRequestDto.getPhoto() == null || checkHomeworkRequestDto.getPhoto().isEmpty()) {
+                    throw new CustomException(ErrorCode.PHOTO_REQUIRED_FOR_HOMEWORK);
+                }
+                
+                try {
+                    String fileName = s3Service.uploadFile(checkHomeworkRequestDto.getPhoto());
+                    String photoUrl = s3Service.getFileUrl(fileName);
+                    
+                    HomeworkPhoto homeworkPhoto = HomeworkPhoto.builder()
+                            .homework(homework)
+                            .url(photoUrl)
+                            .build();
+                    homeworkPhotoRepository.save(homeworkPhoto);
+                    
+                } catch (Exception e) {
+                    throw new CustomException(ErrorCode.CANNOT_UPLOAD_IMG);
+                }
+            }
+        }
+        
         homework.setChecked(checkHomeworkRequestDto.isChecked());
         homeworkRepository.save(homework);
     }
@@ -126,12 +161,30 @@ public class HomeworkService {
 
     @Transactional(readOnly = true)
     public CurrentMonthRateResponse getCurrentMonthRate(Long connectionId) {
-        // 1) 소유권/권한
-        Teacher teacher = memberService.getCurrentTeacherMember();
+        // 권한 검증: 해당 연결의 선생님 또는 학생만 조회 가능
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
         Connection conn = connectionRepository.findById(connectionId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
-        if (!conn.getTeacher().getId().equals(teacher.getId())) {
-            throw new CustomException(ErrorCode.CONNECTION_NOT_FOUND);
+        
+        boolean isAuthorized = false;
+        
+        // 선생님인 경우
+        if (teacherRepository.findByLoginId(loginId).isPresent()) {
+            Teacher teacher = memberService.getCurrentTeacherMember();
+            if (conn.getTeacher().getId().equals(teacher.getId())) {
+                isAuthorized = true;
+            }
+        }
+        // 학생인 경우
+        else if (studentRepository.findByLoginId(loginId).isPresent()) {
+            Student student = memberService.getCurrentStudentMember();
+            if (conn.getStudent().getId().equals(student.getId())) {
+                isAuthorized = true;
+            }
+        }
+        
+        if (!isAuthorized) {
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         YearMonth now = YearMonth.now();

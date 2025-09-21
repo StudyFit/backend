@@ -10,8 +10,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface HomeworkRepository extends JpaRepository<Homework, Long> {
-    // (포함) 이번 달 범위의 특정 connection 모든 숙제 조회
-    // startDate <= hd.date <= endDate
     @Query("""
        select h from Homework h
        join fetch h.homeworkDate hd
