@@ -30,4 +30,8 @@ public class Message {
     public static final String DELETE_SCHEDULE = "세부 수업/기타 일정 삭제하기 성공";
     public static final String GET_CURRENT_MONTH_RATE_SUCCESS = "이번 달 숙제 달성률 불러오기 성공";
     public static final String UPLOAD_PROFILE_IMG = "프로필 이미지 업로드 성공";
+    public static final String GET_PROFILE_SUCCESS = "프로필 조회 성공";
+    public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정 성공";
+    public static final String UPLOAD_PROFILE_IMAGE_SUCCESS = "프로필 이미지 업로드 성공";
+    public static final String CHANGE_PASSWORD_SUCCESS = "비밀번호 변경 성공";
 }
