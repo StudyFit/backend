@@ -30,3 +30,6 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: ${S3_BUCKET}
+
+fcm:
+  service-account-json: "${FCM_SERVICE_ACCOUNT_JSON}"

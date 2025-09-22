@@ -22,7 +22,10 @@ public enum ErrorCode {
     CALENDAR_NOT_FOUND(HttpStatus.NOT_FOUND, "달력 일정을 찾을 수 없습니다."),
     CANNOT_UPLOAD_IMG(HttpStatus.BAD_REQUEST, "사진 업로드 실패하였습니다."),
     FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "피드백을 찾을 수 없습니다."),
-    PHOTO_REQUIRED_FOR_HOMEWORK(HttpStatus.BAD_REQUEST, "이 숙제는 사진 제출이 필수입니다.");
+    PHOTO_REQUIRED_FOR_HOMEWORK(HttpStatus.BAD_REQUEST, "이 숙제는 사진 제출이 필수입니다."),
+    INVALIDE_DATE(HttpStatus.BAD_REQUEST, "잘못된 날짜 형식입니다."),
+    NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림 정보를 찾을 수 없습니다."),
+    FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Fcm 토큰을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
