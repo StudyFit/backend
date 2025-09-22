@@ -36,4 +36,9 @@ public class Message {
     public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정 성공";
     public static final String UPLOAD_PROFILE_IMAGE_SUCCESS = "프로필 이미지 업로드 성공";
     public static final String CHANGE_PASSWORD_SUCCESS = "비밀번호 변경 성공";
+
+    public static final String POST_ALARM = "알림 보내기 성공";
+    public static final String GET_ALARM = "알림 불러오기 성공";
+    public static final String MARK_ALARM = "알림 읽음 처리 성공";
+    public static final String FCM_TOKEN_REGISTERED = "FCM 토큰이 성공적으로 등록되었습니다.";
 }

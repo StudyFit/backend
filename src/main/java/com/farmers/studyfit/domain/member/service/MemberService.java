@@ -4,10 +4,13 @@ import com.farmers.studyfit.domain.S3Service;
 import com.farmers.studyfit.domain.member.dto.ChangePasswordRequestDto;
 import com.farmers.studyfit.domain.member.dto.ProfileResponseDto;
 import com.farmers.studyfit.domain.member.dto.UpdateProfileRequestDto;
+import com.farmers.studyfit.domain.member.entity.Member;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
 import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
+import com.farmers.studyfit.domain.notification.entity.FcmToken;
+import com.farmers.studyfit.domain.notification.repository.FcmTokenRepository;
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +32,7 @@ public class MemberService {
     private final StudentRepository studentRepository;
     private final S3Service s3Service;
     private final PasswordEncoder passwordEncoder;
+    private final FcmTokenRepository fcmTokenRepository;
 
 
     public Teacher getCurrentTeacherMember() {
@@ -51,6 +57,16 @@ public class MemberService {
                 .orElseThrow(() ->
                         new CustomException(ErrorCode.MEMBER_NOT_FOUND)
                 );
+    }
+
+    public Member getCurrentMember(){
+        Member member;
+        try{
+            member = getCurrentTeacherMember();
+        }catch (Exception e){
+            member = getCurrentStudentMember();
+        }
+        return member;
     }
 
     @Transactional
@@ -153,4 +169,21 @@ public class MemberService {
             return uploadStudentProfileImg(file);
         }
     }
+
+    @Transactional
+    public void registerFcmToken(Member member, String fcmTokenString) {
+        Optional<FcmToken> existingToken = fcmTokenRepository.findByToken(fcmTokenString);
+        if (existingToken.isPresent()) {
+            existingToken.get().setCreatedAt(LocalDateTime.now());
+            fcmTokenRepository.save(existingToken.get());
+        } else {
+            FcmToken newFcmToken = FcmToken.builder()
+                    .memberId(member.getId()) // Member 객체에서 ID 추출
+                    .memberRole(member.getRole()) // Member 객체에서 Role 추출
+                    .token(fcmTokenString)
+                    .build();
+            fcmTokenRepository.save(newFcmToken);
+        }
+    }
+
 }

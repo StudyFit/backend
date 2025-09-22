@@ -3,7 +3,7 @@ spring:
     name: studyfit
 
   datasource:
-    url: jdbc:mysql://${MYSQL_URL}:${MYSQL_PORT}/${MYSQL_NAME}
+    url: jdbc:mysql://${DB_URL}/${DB_NAME}
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: 1234
@@ -30,3 +30,6 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: ${S3_BUCKET}
+
+fcm:
+  service-account-json: "${FCM_SERVICE_ACCOUNT_JSON}"
