@@ -169,7 +169,6 @@ public class MemberService {
             return uploadStudentProfileImg(file);
         }
     }
-}
 
     @Transactional
     public void registerFcmToken(Member member, String fcmTokenString) {
