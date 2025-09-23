@@ -20,7 +20,7 @@ public class ProfileResponseDto {
     private LocalDate birth;
     private String phoneNumber;
     private String profileImg;
-    private String role; // TEACHER or STUDENT
+    private String role;
     private String school; // 학생인 경우만
     private Integer grade; // 학생인 경우만
 }

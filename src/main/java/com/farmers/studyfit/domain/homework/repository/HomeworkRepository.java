@@ -10,12 +10,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface HomeworkRepository extends JpaRepository<Homework, Long> {
-    @Query("""
-       select h from Homework h
-       join fetch h.homeworkDate hd
-       where hd.connection.id = :connectionId
-         and hd.date between :startDate and :endDate
-    """)
+    @Query("select h from Homework h " +
+           "join fetch h.homeworkDate hd " +
+           "where hd.connection.id = :connectionId " +
+           "and hd.date between :startDate and :endDate")
     List<Homework> findAllWithDateByConnectionAndRange(
             @Param("connectionId") Long connectionId,
             @Param("startDate") LocalDate startDate,

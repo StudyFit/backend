@@ -185,5 +185,4 @@ public class MemberService {
             fcmTokenRepository.save(newFcmToken);
         }
     }
-
 }

@@ -10,6 +10,9 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
@@ -44,5 +47,20 @@ public class S3Service {
             return null;
         }
         return "https://" + bucket + ".s3." + region + ".amazonaws.com/" + fileName;
+    }
+    
+    public String uploadFileFromPath(String filePath, String fileName) throws IOException {
+        Path path = Paths.get(filePath);
+        byte[] fileBytes = Files.readAllBytes(path);
+        
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucket)
+                .key(fileName)
+                .contentType("image/jpeg")
+                .build();
+        
+        s3Client.putObject(request, RequestBody.fromBytes(fileBytes));
+        
+        return fileName;
     }
 }
