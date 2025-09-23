@@ -42,4 +42,9 @@ public class Message {
     public static final String GET_CHAT_ROOM_LIST_SUCCESS = "채팅방 목록 조회하기 성공";
     public static final String SEND_MESSAGE_SUCCESS = "메시지/이미지 전송하기 성공";
     public static final String GET_CHAT_MESSAGES_SUCCESS = "채팅 메시지 조회하기 성공";
+
+    public static final String POST_ALARM = "알림 보내기 성공";
+    public static final String GET_ALARM = "알림 불러오기 성공";
+    public static final String MARK_ALARM = "알림 읽음 처리 성공";
+    public static final String FCM_TOKEN_REGISTERED = "FCM 토큰이 성공적으로 등록되었습니다.";
 }
