@@ -29,7 +29,7 @@ public enum ErrorCode {
     INVALIDE_DATE(HttpStatus.BAD_REQUEST, "잘못된 날짜 형식입니다."),
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림 정보를 찾을 수 없습니다."),
     FCM_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "Fcm 토큰을 찾을 수 없습니다.");
-
+  
     private final HttpStatus httpStatus;
     private final String message;
 }
