@@ -4,6 +4,7 @@ import com.farmers.studyfit.domain.S3Service;
 import com.farmers.studyfit.domain.chat.dto.*;
 import com.farmers.studyfit.domain.chat.entity.ChatMessage;
 import com.farmers.studyfit.domain.chat.entity.ChatRoom;
+import com.farmers.studyfit.domain.chat.event.ChatMessageEvent;
 import com.farmers.studyfit.domain.chat.repository.ChatMessageRepository;
 import com.farmers.studyfit.domain.chat.repository.ChatRoomRepository;
 import com.farmers.studyfit.domain.connection.entity.Connection;
@@ -15,14 +16,18 @@ import com.farmers.studyfit.domain.member.service.MemberService;
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -34,15 +39,11 @@ public class ChatService {
     private final MemberService memberService;
     private final S3Service s3Service;
 
-    /**
-     * 1. 채팅방 생성하기
-     */
     @Transactional
     public Long createChatRoom(CreateChatRoomRequestDto requestDto) {
         Connection connection = connectionRepository.findById(requestDto.getConnectionId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
         
-        // 이미 채팅방이 존재하는지 확인
         if (chatRoomRepository.existsByConnectionId(requestDto.getConnectionId())) {
             throw new CustomException(ErrorCode.CHAT_ROOM_ALREADY_EXISTS);
         }
@@ -56,21 +57,16 @@ public class ChatService {
         return chatRoomRepository.save(chatRoom).getId();
     }
 
-    /**
-     * 2. 채팅방 목록 조회하기
-     */
     @Transactional(readOnly = true)
     public List<ChatRoomResponseDto> getChatRoomList() {
         String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
         
         List<ChatRoom> chatRooms;
         
-        // 선생님인 경우
         if (teacherRepository.findByLoginId(loginId).isPresent()) {
             Teacher teacher = memberService.getCurrentTeacherMember();
             chatRooms = chatRoomRepository.findByTeacherId(teacher.getId());
         } else {
-            // 학생인 경우
             Student student = memberService.getCurrentStudentMember();
             chatRooms = chatRoomRepository.findByStudentId(student.getId());
         }
@@ -80,15 +76,11 @@ public class ChatService {
                 .toList();
     }
 
-    /**
-     * 3. 채팅 메시지 저장하기 (텍스트)
-     */
     @Transactional
     public void sendMessage(SendMessageRequestDto requestDto) {
         ChatRoom chatRoom = chatRoomRepository.findById(requestDto.getChatRoomId())
                 .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
         
-        // 발신자 정보 설정 (ERD에 맞춤)
         String sender = getCurrentUserType();
 
         ChatMessage message = ChatMessage.builder()
@@ -102,18 +94,12 @@ public class ChatService {
         chatMessageRepository.save(message);
     }
 
-    /**
-     * 4. 과거 메시지 조회하기 (전체) + 읽음 처리
-     */
     @Transactional
     public List<ChatMessageResponseDto> getChatMessages(Long chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
         
-        // 권한 검증
         validateChatRoomAccess(chatRoom);
-        
-        // 읽지 않은 메시지들을 읽음 처리
         markMessagesAsRead(chatRoom);
         
         List<ChatMessage> messages = chatMessageRepository
@@ -124,38 +110,75 @@ public class ChatService {
                 .toList();
     }
 
-
-    /**
-     * 6. 이미지 파일 전송하기
-     */
-    @Transactional
-    public void sendImage(Long chatRoomId, MultipartFile imageFile) throws IOException {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-        
-        // S3에 이미지 업로드
-        String fileName = s3Service.uploadFile(imageFile);
-        String imageUrl = s3Service.getFileUrl(fileName);
-        
-        // 발신자 정보 설정 (ERD에 맞춤)
-        String sender = getCurrentUserType();
-
-        ChatMessage message = ChatMessage.builder()
-                .chatRoom(chatRoom)
-                .sender(sender)
-                .content(imageUrl)
-                .type(ChatMessage.MessageType.IMAGE)
-                .status(false)
-                .build();
-        
-        chatMessageRepository.save(message);
+    public String uploadImageFromBase64(String base64Data) throws IOException {
+        try {
+            // Base64 데이터에서 헤더 제거 (data:image/jpeg;base64, 부분)
+            String base64Image = base64Data;
+            if (base64Data.contains(",")) {
+                base64Image = base64Data.split(",")[1];
+            }
+            
+            // Base64 디코딩
+            byte[] imageBytes = Base64.getDecoder().decode(base64Image);
+            
+            // 파일명 생성
+            String fileName = "chat/" + UUID.randomUUID().toString() + ".jpg";
+            
+            // S3에 업로드 (임시 파일로 생성)
+            java.io.File tempFile = java.io.File.createTempFile("chat_image", ".jpg");
+            java.nio.file.Files.write(tempFile.toPath(), imageBytes);
+            
+            // S3 업로드
+            String uploadedFileName = s3Service.uploadFileFromPath(tempFile.getAbsolutePath(), fileName);
+            String imageUrl = s3Service.getFileUrl(uploadedFileName);
+            
+            // 임시 파일 삭제
+            tempFile.delete();
+            
+            return imageUrl;
+            
+        } catch (Exception e) {
+            log.error("Base64 이미지 업로드 실패: {}", e.getMessage());
+            throw new IOException("이미지 업로드에 실패했습니다.", e);
+        }
     }
-
-    // ========== 헬퍼 메서드들 ==========
     
     /**
-     * 채팅방에 들어갔을 때 읽지 않은 메시지들을 읽음 처리
+     * WebSocket 메시지 이벤트 처리
      */
+    @EventListener
+    @Transactional
+    public void handleChatMessageEvent(ChatMessageEvent event) {
+        try {
+            // 이미지 메시지인 경우 S3 업로드 처리
+            String content = event.getContent();
+            if ("IMAGE".equals(event.getMessageType())) {
+                content = uploadImageFromBase64(event.getContent());
+            }
+            
+            // 메시지 저장
+            ChatRoom chatRoom = chatRoomRepository.findById(event.getChatRoomId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
+            
+            ChatMessage message = ChatMessage.builder()
+                    .chatRoom(chatRoom)
+                    .sender(event.getSender())
+                    .content(content)
+                    .type(ChatMessage.MessageType.valueOf(event.getMessageType()))
+                    .status(false)
+                    .build();
+            
+            chatMessageRepository.save(message);
+            
+            log.info("WebSocket 메시지 저장 완료: chatRoomId={}, sender={}, type={}", 
+                    event.getChatRoomId(), event.getSender(), event.getMessageType());
+            
+        } catch (Exception e) {
+            log.error("WebSocket 메시지 이벤트 처리 실패: {}", e.getMessage());
+        }
+    }
+
+    //헬퍼 메서드
     private void markMessagesAsRead(ChatRoom chatRoom) {
         String currentUserType = getCurrentUserType();
         
@@ -171,9 +194,6 @@ public class ChatService {
         chatMessageRepository.saveAll(unreadMessages);
     }
     
-    /**
-     * 현재 사용자 타입 반환 (TEACHER 또는 STUDENT)
-     */
     private String getCurrentUserType() {
         String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
         if (teacherRepository.findByLoginId(loginId).isPresent()) {

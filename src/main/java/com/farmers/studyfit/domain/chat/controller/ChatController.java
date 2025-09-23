@@ -5,9 +5,6 @@ import com.farmers.studyfit.domain.chat.service.ChatService;
 import com.farmers.studyfit.response.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,11 +41,4 @@ public class ChatController {
         return Response.success(GET_CHAT_MESSAGES_SUCCESS, messages);
     }
 
-    @PostMapping(value = "/rooms/{chatRoomId}/images", consumes = "multipart/form-data")
-    public Response sendImage(
-            @PathVariable("chatRoomId") Long chatRoomId,
-            @RequestPart("image") MultipartFile imageFile) throws IOException {
-        chatService.sendImage(chatRoomId, imageFile);
-        return Response.success(SEND_IMAGE_SUCCESS);
-    }
 }
