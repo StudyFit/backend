@@ -111,6 +111,7 @@ public class ConnectionService {
     connectionRepository.save(connection);
     }
 
+    @Transactional
     public void setTeacherColor(Long connectionId, String themeColor) {
         Connection connection = connectionRepository
                 .findById(connectionId)
@@ -155,5 +156,11 @@ public class ConnectionService {
                     .profileImg(s3Service.getFileUrl(teacher.getProfileImg()))
                     .build();
         }).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteConnection(Long connectionId) {
+        Connection connection = connectionRepository.findById(connectionId).orElseThrow(()-> new RuntimeException());
+        connectionRepository.delete(connection);
     }
 }

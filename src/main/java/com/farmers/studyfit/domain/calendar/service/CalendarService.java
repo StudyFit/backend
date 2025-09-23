@@ -50,14 +50,6 @@ public class CalendarService {
         List<ScheduleResponseDto> scheduleResponseDtoList = calendarList.stream().map(calendar -> dtoConverter.toScheduleResponse(calendar)).toList();
         return scheduleResponseDtoList;
     }
-
-    @Transactional(readOnly = true)
-    public List<HomeworkDateResponseDto> getTeacherCalendarHomeworks(LocalDate startDate, LocalDate endDate) {
-        Teacher teacher = memberService.getCurrentTeacherMember();
-        List<HomeworkDate> homeworkDateList = homeworkDateRepository.findByDateBetweenAndTeacherId(startDate, endDate, teacher.getId());
-        return homeworkDateList.stream().map(homeworkDate -> dtoConverter.toHomeworkDateResponse(homeworkDate)).toList();
-    }
-
     @Transactional(readOnly = true)
     public List<HomeworkDateResponseDto> getStudentCalendarHomeworks(LocalDate startDate, LocalDate endDate) {
         Student student = memberService.getCurrentStudentMember();
