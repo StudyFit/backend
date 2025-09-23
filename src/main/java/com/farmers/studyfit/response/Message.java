@@ -35,7 +35,7 @@ public class Message {
     public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정하기 성공";
     public static final String UPLOAD_PROFILE_IMAGE_SUCCESS = "프로필 이미지 업로드 성공";
     public static final String CHANGE_PASSWORD_SUCCESS = "비밀번호 변경하기 성공";
-    
+
     public static final String CREATE_CHAT_ROOM_SUCCESS = "채팅방 생성하기 성공";
     public static final String GET_CHAT_ROOM_LIST_SUCCESS = "채팅방 목록 조회하기 성공";
     public static final String SEND_MESSAGE_SUCCESS = "메시지/이미지 전송하기 성공";
