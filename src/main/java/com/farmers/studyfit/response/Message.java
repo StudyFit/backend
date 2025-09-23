@@ -31,11 +31,17 @@ public class Message {
     public static final String DELETE_SCHEDULE = "세부 수업/기타 일정 삭제하기 성공";
 
     public static final String GET_CURRENT_MONTH_RATE_SUCCESS = "이번 달 숙제 달성률 불러오기 성공";
-    public static final String UPLOAD_PROFILE_IMG = "이미지 업로드 성공";
-    public static final String GET_PROFILE_SUCCESS = "프로필 조회 성공";
-    public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정 성공";
+    
+    public static final String UPLOAD_PROFILE_IMG = "이미지 업로드하기 성공";
+    public static final String GET_PROFILE_SUCCESS = "프로필 조회하기 성공";
+    public static final String UPDATE_PROFILE_SUCCESS = "프로필 수정하기 성공";
     public static final String UPLOAD_PROFILE_IMAGE_SUCCESS = "프로필 이미지 업로드 성공";
-    public static final String CHANGE_PASSWORD_SUCCESS = "비밀번호 변경 성공";
+    public static final String CHANGE_PASSWORD_SUCCESS = "비밀번호 변경하기 성공";
+
+    public static final String CREATE_CHAT_ROOM_SUCCESS = "채팅방 생성하기 성공";
+    public static final String GET_CHAT_ROOM_LIST_SUCCESS = "채팅방 목록 조회하기 성공";
+    public static final String SEND_MESSAGE_SUCCESS = "메시지/이미지 전송하기 성공";
+    public static final String GET_CHAT_MESSAGES_SUCCESS = "채팅 메시지 조회하기 성공";
 
     public static final String POST_ALARM = "알림 보내기 성공";
     public static final String GET_ALARM = "알림 불러오기 성공";
