@@ -1,5 +1,6 @@
 package com.farmers.studyfit.domain.member.entity;
 
+import com.farmers.studyfit.domain.common.entity.MemberRole;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -30,4 +31,6 @@ public abstract class Member {
 
     @Column
     private String profileImg;
+
+    public abstract MemberRole getRole();
 }
