@@ -37,10 +37,9 @@ public class HomeworkController {
         return Response.success(PATCH_HOMEWORK_SUCCESS);
     }
 
-    // 숙제 삭제하기
-    @DeleteMapping("/{connectionId}")
-    public Response deleteHomework(@PathVariable("connectionId") Long connectionId) {
-        homeworkService.deleteHomework(connectionId);
+    @DeleteMapping("/{homeworkDateId}")
+    public Response deleteHomework(@PathVariable("homeworkDateId") Long homeworkDateId) {
+        homeworkService.deleteHomework(homeworkDateId);
         return Response.success(DELETE_HOMEWORK_SUCCESS);
     }
 

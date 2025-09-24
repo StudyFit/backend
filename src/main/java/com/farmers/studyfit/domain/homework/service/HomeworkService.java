@@ -83,9 +83,10 @@ public class HomeworkService {
     }
 
     @Transactional
-    public void deleteHomework(Long connectionId) {
-        Homework homework = homeworkRepository.findById(connectionId).orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
-        homeworkRepository.delete(homework);
+    public void deleteHomework(Long homeworkDateId) {
+        HomeworkDate homeworkDate = homeworkDateRepository.findById(homeworkDateId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
+        homeworkDateRepository.delete(homeworkDate);
     }
 
     @Transactional
