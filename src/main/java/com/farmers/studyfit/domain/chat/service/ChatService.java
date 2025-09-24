@@ -224,12 +224,31 @@ public class ChatService {
     private ChatRoomResponseDto convertToChatRoomResponseDto(ChatRoom chatRoom) {
         long unreadCount = chatMessageRepository.countByChatRoomAndStatusFalse(chatRoom);
         
+        // 마지막 메시지 조회
+        var lastMessage = chatMessageRepository.findLastMessageByChatRoom(chatRoom);
+        
+        // 현재 사용자에 따라 상대방 프로필 이미지 결정
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+        String opponentProfileImg;
+        
+        if (teacherRepository.findByLoginId(loginId).isPresent()) {
+            // 현재 사용자가 선생님인 경우, 상대방은 학생
+            opponentProfileImg = chatRoom.getStudent().getProfileImg();
+        } else {
+            // 현재 사용자가 학생인 경우, 상대방은 선생님
+            opponentProfileImg = chatRoom.getTeacher().getProfileImg();
+        }
+        
         return ChatRoomResponseDto.builder()
                 .id(chatRoom.getId())
                 .connectionId(chatRoom.getConnection().getId())
                 .teacherName(chatRoom.getTeacher().getName())
                 .studentName(chatRoom.getStudent().getName())
+                .opponentProfileImg(opponentProfileImg)
                 .unreadCount(unreadCount)
+                .lastMessageContent(lastMessage.map(ChatMessage::getContent).orElse(null))
+                .lastMessageTime(lastMessage.map(ChatMessage::getTime).orElse(null))
+                .lastMessageSender(lastMessage.map(ChatMessage::getSender).orElse(null))
                 .build();
     }
     
