@@ -1,5 +1,6 @@
 package com.farmers.studyfit.domain.notification.service;
 
+import com.farmers.studyfit.domain.common.converter.DateConverter;
 import com.farmers.studyfit.domain.connection.entity.Connection;
 import com.farmers.studyfit.domain.connection.repository.ConnectionRepository;
 import com.farmers.studyfit.domain.member.entity.Member;
@@ -27,6 +28,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final ConnectionRepository connectionRepository;
     private final FCMMessageSenderService fcmMessageSenderService;
+    private final DateConverter dateConverter;
 
     @Transactional
     public Notification createNotification(Member receiver, String senderName, String senderProfileImg, String content) {
@@ -63,32 +65,14 @@ public class NotificationService {
         Connection connection = connectionRepository.findById(connectionId).orElseThrow(()->new CustomException(ErrorCode.CONNECTION_NOT_FOUND));
 
         Member student = connection.getStudent();
-        String content = convertDate(date) + " 숙제를 완료하세요!";
-        Notification savedNotification = createNotification(student, teacher.getName(), teacher.getProfileImg(), content);
-        String title = "[StudyFit] 새로운 숙제가 있습니다!"; // 알림 제목
-        fcmMessageSenderService.sendNotification(student, title, content, savedNotification.getId());
+        String content = dateConverter.convertDate(date) + " 숙제를 완료하세요!";
+        String title = "StudyFit";
+        sendNotification(teacher, student, content);
     }
 
-    public String convertDate(String dateString) {
-        // 날짜 문자열이 null이거나 비어 있는지 확인
-        if (dateString == null || dateString.isEmpty()) {
-            throw new CustomException(ErrorCode.INVALIDE_DATE);
-        }
+    public void sendNotification(Member sender, Member receiver, String content){
 
-        try {
-            // "yyyy-MM-dd" 형식의 포맷터 정의
-            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            // 입력된 문자열을 LocalDate 객체로 파싱
-            LocalDate date = LocalDate.parse(dateString, inputFormatter);
-
-            // "M월 d일" 형식의 포맷터 정의
-            DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("M월 d일");
-            // LocalDate 객체를 새로운 형식의 문자열로 변환
-            return date.format(outputFormatter);
-
-        } catch (DateTimeParseException e) {
-            // 파싱 중 오류가 발생하면 예외 처리
-            throw new CustomException(ErrorCode.INVALIDE_DATE);
-        }
+        Notification savedNotification = createNotification(receiver, sender.getName(), sender.getProfileImg(), content);
+        fcmMessageSenderService.sendNotification(receiver, sender.getName(), content, savedNotification.getId());
     }
 }

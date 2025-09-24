@@ -1,5 +1,6 @@
 package com.farmers.studyfit.domain.homework.service;
 
+import com.farmers.studyfit.domain.common.converter.DateConverter;
 import com.farmers.studyfit.domain.common.converter.DtoConverter;
 import com.farmers.studyfit.domain.common.dto.HomeworkDateResponseDto;
 import com.farmers.studyfit.domain.connection.entity.Connection;
@@ -20,6 +21,7 @@ import com.farmers.studyfit.domain.member.repository.StudentRepository;
 import com.farmers.studyfit.domain.member.repository.TeacherRepository;
 import com.farmers.studyfit.domain.member.service.MemberService;
 import com.farmers.studyfit.domain.S3Service;
+import com.farmers.studyfit.domain.notification.service.NotificationService;
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +46,8 @@ public class HomeworkService {
     private final MemberService memberService;
     private final DtoConverter dtoConverter;
     private final S3Service s3Service;
+    private final DateConverter dateConverter;
+    private final NotificationService notificationService;
 
     @Transactional
     public void postHomework(Long connectionId, HomeworkRequestDto homeworkRequestDto) {
@@ -69,6 +73,9 @@ public class HomeworkService {
                 .isPhotoRequired(homeworkRequestDto.isPhotoRequired())
                 .build();
         homeworkRepository.save(homework);
+
+        String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제가 등록되었습니다.";
+        notificationService.sendNotification(connection.getTeacher(), connection.getStudent(), content);
     }
 
     @Transactional
@@ -94,6 +101,10 @@ public class HomeworkService {
         HomeworkDate homeworkDate = homeworkDateRepository.findById(homeworkDateId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
         homeworkDate.setFeedback(postFeedbackRequestDto.getFeedback());
+
+        Connection connection = homeworkDate.getConnection();
+        String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제 피드백이 달렸습니다.";
+        notificationService.sendNotification(connection.getTeacher(), connection.getStudent(), content);
     }
 
     @Transactional
@@ -138,8 +149,11 @@ public class HomeworkService {
         
         homework.setChecked(checkHomeworkRequestDto.isChecked());
         homeworkRepository.save(homework);
-        
         return uploadedImageUrl;
+      
+        Connection connection = homework.getHomeworkDate().getConnection();
+        String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제가 완료되었습니다.";
+        notificationService.sendNotification(connection.getStudent(), connection.getTeacher(), content);
     }
 
     @Transactional
