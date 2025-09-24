@@ -2,11 +2,14 @@ package com.farmers.studyfit.domain.common.converter;
 
 import com.farmers.studyfit.exception.CustomException;
 import com.farmers.studyfit.exception.ErrorCode;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+@Component
 public class DateConverter {
     public String convertDate(String dateString) {
         // 날짜 문자열이 null이거나 비어 있는지 확인
