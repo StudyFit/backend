@@ -124,7 +124,6 @@ public class HomeworkService {
         
         String uploadedImageUrl = null;
         
-        // 숙제 체크 시 사진 필수 여부 검증
         if (checkHomeworkRequestDto.isChecked()) {
             if (homework.isPhotoRequired()) {
                 if (checkHomeworkRequestDto.getPhoto() == null || checkHomeworkRequestDto.getPhoto().isEmpty()) {
