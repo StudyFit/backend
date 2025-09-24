@@ -154,7 +154,6 @@ public class HomeworkService {
         notificationService.sendNotification(connection.getStudent(), connection.getTeacher(), content);
 
         return uploadedImageUrl;
-
     }
 
     @Transactional
