@@ -52,6 +52,7 @@ public class FCMMessageSenderService {
                 .setNotification(com.google.firebase.messaging.Notification.builder()
                         .setTitle(title)
                         .setBody(body)
+                        .setImage("https://study-fit-bucket.s3.ap-northeast-2.amazonaws.com/studyfit-logo.png")
                         .build())
                 .putData("notificationId", String.valueOf(notificationId))
                 .putData("type", "HOMEWORK_ASSIGNED")
