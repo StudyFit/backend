@@ -124,7 +124,6 @@ public class HomeworkService {
         
         String uploadedImageUrl = null;
         
-        // 숙제 체크 시 사진 필수 여부 검증
         if (checkHomeworkRequestDto.isChecked()) {
             if (homework.isPhotoRequired()) {
                 if (checkHomeworkRequestDto.getPhoto() == null || checkHomeworkRequestDto.getPhoto().isEmpty()) {
@@ -149,11 +148,12 @@ public class HomeworkService {
         
         homework.setChecked(checkHomeworkRequestDto.isChecked());
         homeworkRepository.save(homework);
-        return uploadedImageUrl;
-      
+
         Connection connection = homework.getHomeworkDate().getConnection();
         String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제가 완료되었습니다.";
         notificationService.sendNotification(connection.getStudent(), connection.getTeacher(), content);
+
+        return uploadedImageUrl;
     }
 
     @Transactional
