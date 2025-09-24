@@ -90,9 +90,10 @@ public class HomeworkService {
     }
 
     @Transactional
-    public void deleteHomework(Long connectionId) {
-        Homework homework = homeworkRepository.findById(connectionId).orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
-        homeworkRepository.delete(homework);
+    public void deleteHomework(Long homeworkDateId) {
+        HomeworkDate homeworkDate = homeworkDateRepository.findById(homeworkDateId)
+                .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
+        homeworkDateRepository.delete(homeworkDate);
     }
 
     @Transactional
@@ -117,9 +118,11 @@ public class HomeworkService {
     }
 
     @Transactional
-    public void checkHomework(Long homeworkId, CheckHomeworkRequestDto checkHomeworkRequestDto) {
+    public String checkHomework(Long homeworkId, CheckHomeworkRequestDto checkHomeworkRequestDto) {
         Homework homework = homeworkRepository.findById(homeworkId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_NOT_FOUND));
+        
+        String uploadedImageUrl = null;
         
         // 숙제 체크 시 사진 필수 여부 검증
         if (checkHomeworkRequestDto.isChecked()) {
@@ -130,11 +133,11 @@ public class HomeworkService {
                 
                 try {
                     String fileName = s3Service.uploadFile(checkHomeworkRequestDto.getPhoto());
-                    String photoUrl = s3Service.getFileUrl(fileName);
+                    uploadedImageUrl = s3Service.getFileUrl(fileName);
                     
                     HomeworkPhoto homeworkPhoto = HomeworkPhoto.builder()
                             .homework(homework)
-                            .url(photoUrl)
+                            .url(fileName)
                             .build();
                     homeworkPhotoRepository.save(homeworkPhoto);
                     
@@ -146,7 +149,8 @@ public class HomeworkService {
         
         homework.setChecked(checkHomeworkRequestDto.isChecked());
         homeworkRepository.save(homework);
-
+        return uploadedImageUrl;
+      
         Connection connection = homework.getHomeworkDate().getConnection();
         String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제가 완료되었습니다.";
         notificationService.sendNotification(connection.getStudent(), connection.getTeacher(), content);

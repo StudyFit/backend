@@ -37,10 +37,9 @@ public class HomeworkController {
         return Response.success(PATCH_HOMEWORK_SUCCESS);
     }
 
-    // 숙제 삭제하기
-    @DeleteMapping("/{connectionId}")
-    public Response deleteHomework(@PathVariable("connectionId") Long connectionId) {
-        homeworkService.deleteHomework(connectionId);
+    @DeleteMapping("/{homeworkDateId}")
+    public Response deleteHomework(@PathVariable("homeworkDateId") Long homeworkDateId) {
+        homeworkService.deleteHomework(homeworkDateId);
         return Response.success(DELETE_HOMEWORK_SUCCESS);
     }
 
@@ -58,14 +57,13 @@ public class HomeworkController {
         return Response.success(DELETE_FEEDBACK_SUCCESS);
     }
 
-    //(학생) 숙제 체크하기 (사진 업로드 포함)
     @PatchMapping(value = "/{homeworkId}/check", consumes = "multipart/form-data")
     public Response checkHomework(@PathVariable("homeworkId") Long homeworkId, 
                                  @RequestParam("isChecked") boolean isChecked,
                                  @RequestParam(value = "photo", required = false) MultipartFile photo) {
         CheckHomeworkRequestDto checkHomeworkRequestDto = new CheckHomeworkRequestDto(isChecked, photo);
-        homeworkService.checkHomework(homeworkId, checkHomeworkRequestDto);
-        return Response.success(CHECK_HOMEWORK_SUCCESS);
+        String uploadedImageUrl = homeworkService.checkHomework(homeworkId, checkHomeworkRequestDto);
+        return Response.success(CHECK_HOMEWORK_SUCCESS, uploadedImageUrl);
     }
 
     //숙제 목록 불러오기(학생별)
