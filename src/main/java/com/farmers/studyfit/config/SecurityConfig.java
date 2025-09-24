@@ -21,17 +21,11 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtFilter;
 
-    /**
-     * 비밀번호 해시용 BCryptPasswordEncoder 빈 등록
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Spring Security 필터 체인 설정
-     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -62,10 +56,6 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    /**
-     * AuthenticationManager 빈 등록 (로그인 처리용)
-     */
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {

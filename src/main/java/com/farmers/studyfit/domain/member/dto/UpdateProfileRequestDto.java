@@ -18,8 +18,8 @@ public class UpdateProfileRequestDto {
     private String name;
     
     @NotBlank(message = "전화번호는 필수입니다.")
-private String phoneNumber;
+    private String phoneNumber;
     
     private String school; // 학생인 경우만
-    private Integer grade; // 학생인 경우만 (1-6)
+    private Integer grade; // 학생인 경우만
 }
