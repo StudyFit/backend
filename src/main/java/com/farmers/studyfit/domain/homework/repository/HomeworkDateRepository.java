@@ -21,6 +21,11 @@ public interface HomeworkDateRepository extends JpaRepository<HomeworkDate, Long
     @Query("SELECT hd FROM HomeworkDate hd WHERE hd.date BETWEEN :startDate AND :endDate AND hd.student.id = :studentId")
     List<HomeworkDate> findByDateBetweenAndStudentId(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate, @Param("studentId") Long studentId);
     
-    List<HomeworkDate> findByConnectionId(Long connectionId);
-    List<HomeworkDate> findByDateAndTeacherId(LocalDate date, Long teacherId);
+    @EntityGraph(attributePaths = {"connection", "connection.teacher", "connection.student", "homeworkList", "homeworkList.photoList"})
+    @Query("SELECT hd FROM HomeworkDate hd WHERE hd.connection.id = :connectionId")
+    List<HomeworkDate> findByConnectionId(@Param("connectionId") Long connectionId);
+    
+    @EntityGraph(attributePaths = {"connection", "connection.teacher", "connection.student", "homeworkList", "homeworkList.photoList"})
+    @Query("SELECT hd FROM HomeworkDate hd WHERE hd.date = :date AND hd.teacher.id = :teacherId")
+    List<HomeworkDate> findByDateAndTeacherId(@Param("date") LocalDate date, @Param("teacherId") Long teacherId);
 }
