@@ -27,7 +27,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final ConnectionRepository connectionRepository;
-    private final FCMMessageSenderService fcmMessageSenderService;
+    private final ExpoPushMessageSenderService expoPushMessageSenderService; // FCM → Expo로 변경
     private final DateConverter dateConverter;
 
     @Transactional
@@ -71,8 +71,8 @@ public class NotificationService {
     }
 
     public void sendNotification(Member sender, Member receiver, String content){
-
         Notification savedNotification = createNotification(receiver, sender.getName(), sender.getProfileImg(), content);
-        fcmMessageSenderService.sendNotification(receiver, sender.getName(), content, savedNotification.getId());
+        // FCM → Expo Push 서비스로 변경
+        expoPushMessageSenderService.sendNotification(receiver, sender.getName(), content, savedNotification.getId());
     }
 }

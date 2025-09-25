@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface FcmTokenRepository extends JpaRepository<FcmToken, Long> {
 
     // 특정 멤버 ID와 역할에 해당하는 모든 FCM 토큰을 조회합니다.
-    List<FcmToken> findByMemberIdAndMemberRole(Long memberId, MemberRole memberRole);
+    Optional<FcmToken> findByMemberIdAndMemberRole(Long memberId, MemberRole memberRole);
 
     // 특정 토큰 문자열로 FcmToken 엔티티를 조회합니다.
     Optional<FcmToken> findByToken(String token);

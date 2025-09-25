@@ -170,16 +170,28 @@ public class MemberService {
         }
     }
 
+
     @Transactional
     public void registerFcmToken(Member member, String fcmTokenString) {
-        Optional<FcmToken> existingToken = fcmTokenRepository.findByToken(fcmTokenString);
+        // 기존: 토큰으로만 조회
+        // Optional<FcmToken> existingToken = fcmTokenRepository.findByToken(fcmTokenString);
+
+        // 수정: 해당 회원의 기존 토큰 조회
+        Optional<FcmToken> existingToken = fcmTokenRepository.findByMemberIdAndMemberRole(
+                member.getId(), member.getRole()
+        );
+
         if (existingToken.isPresent()) {
-            existingToken.get().setCreatedAt(LocalDateTime.now());
-            fcmTokenRepository.save(existingToken.get());
+            // 기존 토큰이 있으면 새 토큰으로 업데이트
+            FcmToken fcmToken = existingToken.get();
+            fcmToken.setToken(fcmTokenString);
+            fcmToken.setCreatedAt(LocalDateTime.now());
+            fcmTokenRepository.save(fcmToken);
         } else {
+            // 새 토큰 생성
             FcmToken newFcmToken = FcmToken.builder()
-                    .memberId(member.getId()) // Member 객체에서 ID 추출
-                    .memberRole(member.getRole()) // Member 객체에서 Role 추출
+                    .memberId(member.getId())
+                    .memberRole(member.getRole())
                     .token(fcmTokenString)
                     .build();
             fcmTokenRepository.save(newFcmToken);
