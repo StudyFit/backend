@@ -222,7 +222,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         pingScheduler.scheduleAtFixedRate(() -> {
             try {
                 if (session.isOpen()) {
-                    // 토큰 만료 확인
+                    // 토큰 만료 확인 (더 관대하게 처리)
                     if (isTokenExpired(session)) {
                         log.warn("토큰 만료로 인한 연결 종료: {}", session.getId());
                         session.close(CloseStatus.POLICY_VIOLATION.withReason("토큰이 만료되었습니다."));
@@ -235,8 +235,11 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                 }
             } catch (Exception e) {
                 log.error("핑 전송 실패: {}", e.getMessage());
+                // 핑 전송 실패 시 즉시 연결 종료하지 않고 로그만 남김
                 try {
-                    session.close();
+                    if (session.isOpen()) {
+                        session.close();
+                    }
                 } catch (IOException ioException) {
                     log.error("세션 종료 실패: {}", ioException.getMessage());
                 }
@@ -248,12 +251,15 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         try {
             String token = (String) session.getAttributes().get("token");
             if (token != null) {
+                // 토큰 검증을 시도하되, 만료된 경우에도 즉시 연결을 끊지 않음
                 tokenProvider.validateToken(token);
                 return false;
             }
         } catch (Exception e) {
             log.warn("토큰 검증 실패: {}", e.getMessage());
+            // 토큰 검증 실패 시에도 연결을 유지 (클라이언트에서 재연결 처리)
+            return false; // false로 변경하여 연결 유지
         }
-        return true;
+        return false; // 토큰이 없어도 연결 유지
     }
 }

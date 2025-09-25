@@ -20,10 +20,10 @@ public class WebSocketConfig implements WebSocketConfigurer {
     
     private final ChatWebSocketHandler chatWebSocketHandler;
     
-    @Value("${spring.websocket.max-session-idle-timeout:300000}")
+    @Value("${spring.websocket.max-session-idle-timeout:1800000}")
     private long maxSessionIdleTimeout;
     
-    @Value("${spring.websocket.connection-timeout:60000}")
+    @Value("${spring.websocket.connection-timeout:300000}")
     private long connectionTimeout;
     
     @Bean
