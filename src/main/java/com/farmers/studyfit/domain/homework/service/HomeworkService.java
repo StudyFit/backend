@@ -74,7 +74,7 @@ public class HomeworkService {
                 .build();
         homeworkRepository.save(homework);
 
-        String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제가 등록되었습니다.";
+        String content = dateConverter.convertDate(homeworkDate.getDate().toString()) + " 숙제가 등록되었습니다.";
         notificationService.sendNotification(connection.getTeacher(), connection.getStudent(), content);
     }
 
@@ -103,7 +103,7 @@ public class HomeworkService {
         homeworkDate.setFeedback(postFeedbackRequestDto.getFeedback());
 
         Connection connection = homeworkDate.getConnection();
-        String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제 피드백이 달렸습니다.";
+        String content = dateConverter.convertDate(homeworkDate.getDate() + " 숙제 피드백이 달렸습니다.";
         notificationService.sendNotification(connection.getTeacher(), connection.getStudent(), content);
     }
 
@@ -150,7 +150,7 @@ public class HomeworkService {
         homeworkRepository.save(homework);
 
         Connection connection = homework.getHomeworkDate().getConnection();
-        String content = dateConverter.convertDate(LocalDate.now().toString()) + " 숙제가 완료되었습니다.";
+        String content = dateConverter.convertDate(homework.getHomeworkDate().getDate().toString()) + " 숙제가 완료되었습니다.";
         notificationService.sendNotification(connection.getStudent(), connection.getTeacher(), content);
 
         return uploadedImageUrl;

@@ -225,7 +225,7 @@ public class ChatService {
         long unreadCount = chatMessageRepository.countByChatRoomAndStatusFalse(chatRoom);
         
         // 마지막 메시지 조회
-        var lastMessage = chatMessageRepository.findLastMessageByChatRoom(chatRoom);
+        var lastMessage = chatMessageRepository.findFirstByChatRoomOrderByTimeDescIdDesc(chatRoom);
         
         // 현재 사용자에 따라 상대방 프로필 이미지 결정
         String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
