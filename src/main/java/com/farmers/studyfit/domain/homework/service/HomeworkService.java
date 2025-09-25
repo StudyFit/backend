@@ -101,6 +101,9 @@ public class HomeworkService {
         HomeworkDate homeworkDate = homeworkDateRepository.findById(homeworkDateId)
                 .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
         homeworkDate.setFeedback(postFeedbackRequestDto.getFeedback());
+        
+        // 피드백 저장을 위해 repository에 저장
+        homeworkDateRepository.save(homeworkDate);
 
         Connection connection = homeworkDate.getConnection();
         String content = dateConverter.convertDate(homeworkDate.getDate() + " 숙제 피드백이 달렸습니다.");
@@ -115,6 +118,9 @@ public class HomeworkService {
             throw new CustomException(ErrorCode.FEEDBACK_NOT_FOUND);
         }
         homeworkDate.setFeedback(null);
+        
+        // 피드백 삭제를 위해 repository에 저장
+        homeworkDateRepository.save(homeworkDate);
     }
 
     @Transactional
