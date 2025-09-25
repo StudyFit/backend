@@ -12,7 +12,9 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "CHAT_ROOM")
+@Table(name = "CHAT_ROOM", uniqueConstraints = {
+    @UniqueConstraint(name = "uk_chat_room_connection", columnNames = "CONNECT_ID")
+})
 public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +22,7 @@ public class ChatRoom {
     private Long id;
     
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CONNECT_ID", nullable = false)
+    @JoinColumn(name = "CONNECT_ID", nullable = false, unique = true)
     private Connection connection; // 선생님-학생 연결
     
     @ManyToOne(fetch = FetchType.LAZY)
