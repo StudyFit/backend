@@ -12,9 +12,11 @@ import java.util.Optional;
 @Repository
 public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
     
-    Optional<ChatRoom> findByConnectionId(Long connectionId);
+    @Query("SELECT cr FROM ChatRoom cr WHERE cr.connection.id = :connectionId")
+    Optional<ChatRoom> findByConnectionId(@Param("connectionId") Long connectionId);
     
-    boolean existsByConnectionId(Long connectionId);
+    @Query("SELECT COUNT(cr) > 0 FROM ChatRoom cr WHERE cr.connection.id = :connectionId")
+    boolean existsByConnectionId(@Param("connectionId") Long connectionId);
     
     @Query("SELECT cr FROM ChatRoom cr WHERE cr.teacher.id = :teacherId")
     List<ChatRoom> findByTeacherId(@Param("teacherId") Long teacherId);
