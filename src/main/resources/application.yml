@@ -16,6 +16,15 @@ spring:
       format_sql: true
       ddl-auto: update
 
+  # 웹소켓 설정
+  websocket:
+    # 핑퐁 간격 (밀리초)
+    ping-interval: 30000
+    # 연결 타임아웃 (밀리초)
+    connection-timeout: 60000
+    # 최대 세션 유지 시간 (밀리초)
+    max-session-idle-timeout: 300000
+
 jwt:
   secret: ${JWT_SECRET}
   access-expiration-ms: ${JWT_ACCESS_EXPIRE}        # 15분

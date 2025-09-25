@@ -5,7 +5,6 @@ import com.farmers.studyfit.domain.chat.dto.WebSocketMessageDto;
 import com.farmers.studyfit.domain.chat.event.ChatMessageEvent;
 import com.farmers.studyfit.config.jwt.TokenProvider;
 import com.farmers.studyfit.exception.CustomException;
-import com.farmers.studyfit.exception.ErrorCode;
 import org.springframework.context.ApplicationEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,10 @@ import org.springframework.web.socket.*;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 @Component
@@ -27,6 +30,12 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     
     // 채팅방별 세션 관리 (채팅방 ID -> 세션 목록)
     private final Map<Long, Map<String, WebSocketSession>> chatRoomSessions = new ConcurrentHashMap<>();
+    
+    // 핑퐁 스케줄러
+    private final ScheduledExecutorService pingScheduler = Executors.newScheduledThreadPool(1);
+    
+    @Value("${spring.websocket.ping-interval:30}")
+    private long pingIntervalSeconds;
     
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -62,6 +71,9 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                     
                     log.info("사용자 {}가 채팅방 {}에 연결됨", userId, chatRoomId);
                     
+                    // 핑퐁 스케줄 시작
+                    startPingPong(session);
+                    
                 } catch (CustomException e) {
                     log.error("WebSocket 연결 실패: 토큰 검증 실패 - {}", e.getMessage());
                     session.close(CloseStatus.POLICY_VIOLATION.withReason("인증에 실패했습니다."));
@@ -83,6 +95,18 @@ public class ChatWebSocketHandler implements WebSocketHandler {
         if (message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
             try {
+                // 핑 메시지 처리
+                if ("PING".equals(textMessage.getPayload())) {
+                    session.sendMessage(new TextMessage("PONG"));
+                    return;
+                }
+                
+                // 퐁 메시지 처리
+                if ("PONG".equals(textMessage.getPayload())) {
+                    log.debug("PONG 수신: {}", session.getId());
+                    return;
+                }
+                
                 WebSocketMessageDto messageDto = objectMapper.readValue(
                         textMessage.getPayload(), WebSocketMessageDto.class);
                 
@@ -93,6 +117,8 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                 log.error("메시지 처리 중 오류 발생: {}", e.getMessage());
                 sendErrorMessage(session, "메시지 처리 중 오류가 발생했습니다.");
             }
+        } else if (message instanceof PongMessage) {
+            log.debug("PongMessage 수신: {}", session.getId());
         }
     }
     
@@ -191,5 +217,43 @@ public class ChatWebSocketHandler implements WebSocketHandler {
             }
         }
         return params;
+    }
+    private void startPingPong(WebSocketSession session) {
+        pingScheduler.scheduleAtFixedRate(() -> {
+            try {
+                if (session.isOpen()) {
+                    // 토큰 만료 확인
+                    if (isTokenExpired(session)) {
+                        log.warn("토큰 만료로 인한 연결 종료: {}", session.getId());
+                        session.close(CloseStatus.POLICY_VIOLATION.withReason("토큰이 만료되었습니다."));
+                        return;
+                    }
+                    
+                    // 핑 메시지 전송
+                    session.sendMessage(new TextMessage("PING"));
+                    log.debug("PING 전송: {}", session.getId());
+                }
+            } catch (Exception e) {
+                log.error("핑 전송 실패: {}", e.getMessage());
+                try {
+                    session.close();
+                } catch (IOException ioException) {
+                    log.error("세션 종료 실패: {}", ioException.getMessage());
+                }
+            }
+        }, pingIntervalSeconds, pingIntervalSeconds, TimeUnit.SECONDS);
+    }
+    
+    private boolean isTokenExpired(WebSocketSession session) {
+        try {
+            String token = (String) session.getAttributes().get("token");
+            if (token != null) {
+                tokenProvider.validateToken(token);
+                return false;
+            }
+        } catch (Exception e) {
+            log.warn("토큰 검증 실패: {}", e.getMessage());
+        }
+        return true;
     }
 }
