@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,4 +18,5 @@ public class HomeworkResponseDto {
     private Boolean isCompleted;
     private Boolean isPhotoRequired;
     private Boolean isPhotoUploaded;
+    private List<String> photoUrls;  // 사진 URL 배열
 }
