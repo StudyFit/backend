@@ -18,12 +18,12 @@ spring:
 
   # 웹소켓 설정
   websocket:
-    # 핑퐁 간격 (밀리초)
-    ping-interval: 30000
+    # 핑퐁 간격 (초) - 2분마다 핑 전송
+    ping-interval: 120
     # 연결 타임아웃 (밀리초)
-    connection-timeout: 60000
-    # 최대 세션 유지 시간 (밀리초)
-    max-session-idle-timeout: 300000
+    connection-timeout: 300000
+    # 최대 세션 유지 시간 (밀리초) - 30분
+    max-session-idle-timeout: 1800000
 
 jwt:
   secret: ${JWT_SECRET}
