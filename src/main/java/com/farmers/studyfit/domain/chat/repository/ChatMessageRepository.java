@@ -5,8 +5,6 @@ import com.farmers.studyfit.domain.chat.entity.ChatRoom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -24,6 +22,5 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     List<ChatMessage> findByChatRoomAndStatusFalse(ChatRoom chatRoom);
     
     // 채팅방의 마지막 메시지 조회
-    @Query("SELECT cm FROM ChatMessage cm WHERE cm.chatRoom = :chatRoom ORDER BY cm.time DESC")
-    Optional<ChatMessage> findLastMessageByChatRoom(@Param("chatRoom") ChatRoom chatRoom);
+    Optional<ChatMessage> findFirstByChatRoomOrderByTimeDescIdDesc(ChatRoom chatRoom);
 }
