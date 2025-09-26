@@ -102,9 +102,9 @@ public class HomeworkService {
                 .orElseThrow(() -> new CustomException(ErrorCode.HOMEWORK_DATE_NOT_FOUND));
         homeworkDate.setFeedback(postFeedbackRequestDto.getFeedback());
 
-        Connection connection = homeworkDate.getConnection();
-        String content = dateConverter.convertDate(homeworkDate.getDate() + " 숙제 피드백이 달렸습니다.");
-        notificationService.sendNotification(connection.getTeacher(), connection.getStudent(), content);
+        //Connection connection = homeworkDate.getConnection();
+        //String content = dateConverter.convertDate(homeworkDate.getDate() + " 숙제 피드백이 달렸습니다.");
+        //notificationService.sendNotification(connection.getTeacher(), connection.getStudent(), content);
     }
 
     @Transactional
