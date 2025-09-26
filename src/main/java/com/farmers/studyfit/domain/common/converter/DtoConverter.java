@@ -10,7 +10,6 @@ import com.farmers.studyfit.domain.homework.entity.Homework;
 import com.farmers.studyfit.domain.homework.entity.HomeworkDate;
 import com.farmers.studyfit.domain.member.entity.Student;
 import com.farmers.studyfit.domain.member.entity.Teacher;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -86,12 +85,22 @@ public class DtoConverter {
         } else {
             isPhotoUploaded = null;
         }
+        
+        // 사진 URL 배열 생성
+        List<String> photoUrls = h.getPhotoList() != null ? 
+            h.getPhotoList().stream()
+                .map(photo -> photo.getUrl())
+                .toList() : 
+            List.of();
+        
         return HomeworkResponseDto.builder()
                 .homeworkId(h.getId())
                 .content(h.getContent())
                 .isCompleted(h.isChecked())
                 .isPhotoRequired(h.isPhotoRequired())
-                .isPhotoUploaded(isPhotoUploaded).build();
+                .isPhotoUploaded(isPhotoUploaded)
+                .photoUrls(photoUrls)
+                .build();
 
     }
 }

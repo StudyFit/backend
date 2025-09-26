@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -24,6 +26,10 @@ public class Homework {
     private boolean isChecked;
     @Column(nullable = false)
     private boolean isPhotoRequired;  // 사진 필수 여부
+    
+    @OneToMany(mappedBy = "homework", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<HomeworkPhoto> photoList;
 
     public void setChecked(boolean isChecked) {
         this.isChecked = isChecked;
